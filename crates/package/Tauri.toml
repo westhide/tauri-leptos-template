@@ -1,0 +1,38 @@
+identifier   = "org.unknown"
+product-name = "unknown"
+version      = "0.1.0"
+
+
+[app.security.pattern]
+options = { dir = "./isolation" }
+use     = "isolation"
+
+
+[[app.windows]]
+title = "unknown"
+
+height = 600
+width  = 800
+
+
+[build]
+# Leptos
+before-build-command = "cargo leptos --manifest-path ../Cargo.toml build --release"
+before-dev-command   = "cargo leptos --manifest-path ../Cargo.toml serve"
+
+# Trunk
+# before-build-command = "trunk build --config webview/Trunk.toml --release"
+# before-dev-command   = "trunk serve --config webview/Trunk.toml"
+
+# frontend-dist          = "../../dist"
+dev-url                = "http://127.0.0.1:1420"
+remove-unused-commands = true
+
+
+[bundle]
+active  = true
+icon    = ["icons/128x128.png", "icons/128x128@2x.png", "icons/32x32.png", "icons/icon.icns", "icons/icon.ico"]
+targets = "all"
+
+
+[plugins]

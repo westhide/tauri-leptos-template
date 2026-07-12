@@ -1,0 +1,71 @@
+[package]
+name = "webview"
+
+description = "webview"
+edition     = { workspace = true }
+license     = { workspace = true }
+version     = { workspace = true }
+
+
+[lib]
+crate-type = ["cdylib", "rlib", "staticlib"]
+
+
+[[bin]]
+name              = "client"
+required-features = ["csr"]
+
+
+[[bin]]
+name              = "server"
+required-features = ["ssr"]
+
+
+[features]
+default = []
+
+csr     = ["leptos/csr"]
+hydrate = ["leptos/hydrate"]
+ssr     = ["dep:axum", "dep:leptos_axum", "dep:tokio", "leptos/ssr", "leptos_axum/default", "leptos_meta/ssr", "leptos_router/ssr"]
+
+
+[lints]
+workspace = true
+
+
+[dependencies]
+libgrpc = { workspace = true, features = ["gzip"] }
+
+axum               = { workspace = true, features = ["http2", "query", "tokio", "tracing", "ws"], optional = true }
+leptos             = { workspace = true, features = ["tracing"] }
+leptos_axum        = { workspace = true, features = ["tracing"], optional = true }
+leptos_meta        = { workspace = true, features = ["tracing"] }
+leptos_router      = { workspace = true, features = ["tracing"] }
+serde              = { workspace = true, features = ["derive"] }
+thiserror          = { workspace = true }
+tokio              = { workspace = true, features = ["macros", "net", "rt-multi-thread", "signal", "sync", "time"], optional = true }
+tracing            = { workspace = true, features = ["attributes", "log", "release_max_level_info", "std"] }
+tracing-subscriber = { workspace = true, features = ["ansi", "env-filter", "fmt", "smallvec", "std", "tracing-log"] }
+
+console_error_panic_hook = { default-features = false, version = "0.1" }
+console_log              = { default-features = false, version = "1.0", features = ["color"] }
+
+
+[build-dependencies]
+
+
+[package.metadata.leptos]
+assets-dir          = "./public"
+bin-exe-name        = "server"
+bin-features        = ["ssr"]
+bin-target          = "server"
+lib-features        = ["hydrate"]
+reload-port         = 1421
+site-addr           = "127.0.0.1:1420"
+site-root           = "./dist"
+style-file          = "./style/main.css"
+tailwind-input-file = "./style/tailwind.css"
+
+disable-server-fn-hash = true
+server-fn-mod-path     = true
+server-fn-prefix       = "/server/fn"

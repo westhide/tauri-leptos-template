@@ -1,0 +1,42 @@
+[package]
+name = "service"
+
+description = "service"
+edition     = { workspace = true }
+license     = { workspace = true }
+version     = { workspace = true }
+
+
+[lib]
+crate-type = ["cdylib", "rlib", "staticlib"]
+
+
+[features]
+default = []
+
+mimalloc = ["dep:mimalloc"]
+server   = ["leptos/ssr"]
+
+
+[lints]
+workspace = true
+
+
+[dependencies]
+libgrpc = { workspace = true, features = ["gzip", "router", "transport"] }
+
+axum               = { workspace = true, features = ["http2", "query", "tokio", "tracing", "ws"] }
+clap               = { workspace = true, features = ["color", "derive", "env", "error-context", "help", "std", "suggestions", "usage"] }
+config             = { workspace = true, features = ["toml"] }
+leptos             = { workspace = true, features = ["tracing"] }
+mimalloc           = { workspace = true, optional = true }
+serde              = { workspace = true, features = ["derive"] }
+thiserror          = { workspace = true }
+tokio              = { workspace = true, features = ["macros", "net", "rt-multi-thread", "signal", "sync", "time"] }
+tokio-util         = { workspace = true, features = ["rt"] }
+tracing            = { workspace = true, features = ["attributes", "release_max_level_info", "std"] }
+tracing-subscriber = { workspace = true, features = ["ansi", "env-filter", "fmt", "smallvec", "std", "tracing-log"] }
+
+
+[dev-dependencies]
+insta = { workspace = true, features = ["colors", "redactions"] }

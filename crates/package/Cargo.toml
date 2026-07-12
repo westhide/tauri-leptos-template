@@ -1,0 +1,37 @@
+[package]
+name = "package"
+
+description = "package"
+edition     = { workspace = true }
+license     = { workspace = true }
+version     = { workspace = true }
+
+
+[lib]
+crate-type = ["cdylib", "rlib", "staticlib"]
+
+
+[features]
+default       = ["encoding-gzip"]
+encoding-gzip = ["libgrpc/gzip"]
+
+
+[lints]
+workspace = true
+
+
+[dependencies]
+libgrpc = { workspace = true, features = ["router", "transport"] }
+service = { workspace = true }
+
+serde   = { workspace = true, features = ["derive"] }
+tokio   = { workspace = true, features = ["macros", "net", "rt-multi-thread", "sync"] }
+tracing = { workspace = true, features = ["attributes", "log", "release_max_level_info", "std"] }
+
+tauri               = { default-features = false, version = "2", features = ["compression", "config-toml", "dbus", "dynamic-acl", "isolation", "tracing", "wry"] }
+tauri-plugin-log    = { default-features = false, version = "2", features = ["colored"] }
+tauri-plugin-opener = { default-features = false, version = "2" }
+
+
+[build-dependencies]
+tauri-build = { default-features = false, version = "2", features = ["config-toml", "isolation"] }

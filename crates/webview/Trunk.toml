@@ -1,0 +1,16 @@
+[build]
+dist     = "../../dist"
+features = ["csr"]
+minify   = "on_release"
+target   = "./index.html"
+
+[tools]
+tailwindcss = "4.2.1"
+
+[serve]
+addresses   = ["127.0.0.1"]
+open        = false
+port        = 1420
+ws_protocol = "ws"
+
+[watch]

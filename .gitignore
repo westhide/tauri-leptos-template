@@ -1,0 +1,6 @@
+/.direnv
+
+/dist
+/target
+
+/proto_gen
