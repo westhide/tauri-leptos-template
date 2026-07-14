@@ -10,4 +10,4 @@ pub fn init_logger(level: &str) -> Result<Null> {
     Ok(NULL)
 }
 
-pub use tracing::*;
+pub(crate) use tracing::*;

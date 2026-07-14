@@ -11,11 +11,20 @@ version     = { workspace = true }
 crate-type = ["cdylib", "rlib", "staticlib"]
 
 
+[[bin]]
+name              = "server"
+required-features = ["server"]
+
+[[bin]]
+name              = "pingpong"
+required-features = ["server"]
+
+
 [features]
 default = []
 
 mimalloc = ["dep:mimalloc"]
-server   = ["leptos/ssr"]
+server   = ["axum/tokio", "axum/ws", "dep:leptos_axum", "leptos/ssr", "leptos_axum/default", "libgrpc/router", "libgrpc/transport", "tokio/net", "tokio/rt-multi-thread", "tokio/signal"]
 
 
 [lints]
@@ -23,17 +32,19 @@ workspace = true
 
 
 [dependencies]
-libgrpc = { workspace = true, features = ["gzip", "router", "transport"] }
+libgrpc = { workspace = true, features = ["gzip"] }
 
-axum               = { workspace = true, features = ["http2", "query", "tokio", "tracing", "ws"] }
+axum               = { workspace = true, features = ["http2", "query", "tracing"] }
 clap               = { workspace = true, features = ["color", "derive", "env", "error-context", "help", "std", "suggestions", "usage"] }
 config             = { workspace = true, features = ["toml"] }
 leptos             = { workspace = true, features = ["tracing"] }
+leptos_axum        = { workspace = true, features = ["tracing"], optional = true }
 mimalloc           = { workspace = true, optional = true }
 serde              = { workspace = true, features = ["derive"] }
 thiserror          = { workspace = true }
-tokio              = { workspace = true, features = ["macros", "net", "rt-multi-thread", "signal", "sync", "time"] }
+tokio              = { workspace = true, features = ["macros", "sync", "time"] }
 tokio-util         = { workspace = true, features = ["rt"] }
+tower-http         = { workspace = true, features = ["cors"] }
 tracing            = { workspace = true, features = ["attributes", "release_max_level_info", "std"] }
 tracing-subscriber = { workspace = true, features = ["ansi", "env-filter", "fmt", "smallvec", "std", "tracing-log"] }
 

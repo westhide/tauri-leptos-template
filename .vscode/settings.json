@@ -3,6 +3,10 @@
 		"rust": "html"
 	},
 	"nixEnvSelector.nixFile": "${workspaceFolder}/shell.nix",
-	"rust-analyzer.cargo.features": ["webview/hydrate", "webview/ssr"],
+	"rust-analyzer.cargo.features": [
+		"service/server",
+		"webview/hydrate",
+		"webview/ssr"
+	],
 	"rust-analyzer.rustfmt.overrideCommand": ["leptosfmt", "--stdin", "--rustfmt"]
 }

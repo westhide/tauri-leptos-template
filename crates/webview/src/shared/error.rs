@@ -1,32 +1,42 @@
-use leptos::{
-    serde_json::Error as JsonError,
-    server_fn::{
-        codec::JsonEncoding,
-        error::{FromServerFnError, ServerFnErrorErr},
-    },
-    wasm_bindgen::JsValue,
-};
-use serde::{Deserialize, Serialize};
+use std::io::Error as StdIoError;
 
-#[derive(Debug, Serialize, Deserialize, thiserror::Error)]
+use leptos::{
+    config::errors::LeptosConfigError, serde_json::Error as JsonError, wasm_bindgen::JsValue,
+};
+use libgrpc::tonic::Status as GrpcStatus;
+use service::shared::error::{Error as ServiceError, ServerFnError};
+
+use crate::shared::logger::log::ParseLevelError as LogParseLevelError;
+
+/// Error
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
-    ServerFnErrorErr(#[from] ServerFnErrorErr),
+    StdIoError(#[from] StdIoError),
+
+    #[error(transparent)]
+    GrpcStatus(#[from] GrpcStatus),
 
     #[error("{0}")]
     JsError(String),
 
+    #[error(transparent)]
+    JsonError(#[from] JsonError),
+
+    #[error(transparent)]
+    LeptosConfigError(#[from] LeptosConfigError),
+
+    #[error(transparent)]
+    LogParseLevelError(#[from] LogParseLevelError),
+
     #[error("{0}")]
-    JsonError(String),
+    ServerFnError(String),
+
+    #[error(transparent)]
+    ServiceError(#[from] ServiceError),
 
     #[error("{0}")]
     Error(String),
-}
-
-impl From<JsonError> for Error {
-    fn from(err: JsonError) -> Self {
-        Self::JsonError(err.to_string())
-    }
 }
 
 impl From<JsValue> for Error {
@@ -35,28 +45,17 @@ impl From<JsValue> for Error {
     }
 }
 
-impl FromServerFnError for Error {
-    type Encoder = JsonEncoding;
-
-    fn from_server_fn_error(err: ServerFnErrorErr) -> Self {
-        Self::ServerFnErrorErr(err)
+impl From<Error> for JsValue {
+    fn from(err: Error) -> Self {
+        JsValue::from_str(&err.to_string())
     }
 }
 
-#[cfg(feature = "ssr")]
-const _: () = {
-    use axum::{
-        http::StatusCode,
-        response::{IntoResponse, Response},
-    };
-
-    impl IntoResponse for Error {
-        fn into_response(self) -> Response {
-            const CODE: StatusCode = StatusCode::INTERNAL_SERVER_ERROR;
-            (CODE, self.to_string()).into_response()
-        }
+impl From<ServerFnError> for Error {
+    fn from(err: ServerFnError) -> Self {
+        Self::ServerFnError(err.to_string())
     }
-};
+}
 
 macro_rules! err {
     ($($arg:tt)*) => {
@@ -66,4 +65,4 @@ macro_rules! err {
 
 pub(crate) use err;
 
-pub type Result<T, E = Error> = std::result::Result<T, E>;
+pub(crate) type Result<T, E = Error> = std::result::Result<T, E>;

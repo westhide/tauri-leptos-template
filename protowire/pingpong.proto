@@ -7,9 +7,9 @@ service PingPongService {
 }
 
 message Ping {
-  string id = 1;
+  uint32 id = 1;
 }
 
 message Pong {
-  string id = 1;
+  uint32 id = 1;
 }

@@ -1,9 +1,9 @@
-use tracing::log::Level::Debug;
+use crate::shared::{NULL, Null, error::Result};
 
-pub fn init_console_log() {
+pub fn init_console_log(level: &str) -> Result<Null> {
     console_error_panic_hook::set_once();
-    // TODO: log level
-    console_log::init_with_level(Debug).ok();
+    console_log::init_with_level(level.parse()?).ok();
+    Ok(NULL)
 }
 
-pub use tracing::*;
+pub(crate) use tracing::*;

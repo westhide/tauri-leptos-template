@@ -14,4 +14,5 @@ pub mod protowire {
 
 pub use prost;
 pub use tonic;
+// Web
 pub use tonic_web as web;

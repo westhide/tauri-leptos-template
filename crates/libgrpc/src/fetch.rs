@@ -13,18 +13,23 @@ use gloo::net::{
         RequestBuilder as GlooHttpRequestBuilder, Response as GlooHttpResponse,
     },
 };
-use http::{
-    Error as HttpError, HeaderName, Request as HttpRequest, Response as HttpResponse,
-    header::{
-        InvalidHeaderName as HttpInvalidHeaderName, InvalidHeaderValue as HttpInvalidHeaderValue,
-        ToStrError as HttpHeaderToStrError,
-    },
-};
 use http_body::{Body as HttpBody, Frame as HttpBodyFrame};
 use http_body_util::BodyExt;
-use tonic::{Status, body::Body as GrpcBody};
+use tonic::{
+    Status,
+    body::Body as GrpcBody,
+    codegen::{
+        Service,
+        http::{
+            Error as HttpError, HeaderName, Request as HttpRequest, Response as HttpResponse,
+            header::{
+                InvalidHeaderName as HttpInvalidHeaderName,
+                InvalidHeaderValue as HttpInvalidHeaderValue, ToStrError as HttpHeaderToStrError,
+            },
+        },
+    },
+};
 use tonic_web::GrpcWebCall;
-use tower::Service;
 use wasm_bindgen::JsValue;
 use wasm_streams::ReadableStream as WasmReadableStream;
 use web_sys::{ReadableStream as HttpReadableStream, RequestMode, js_sys::Uint8Array};
