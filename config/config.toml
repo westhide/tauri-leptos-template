@@ -2,4 +2,5 @@
 level = "debug"
 
 [server]
-host_url = "127.0.0.1:3000"
+grpc_url = "127.0.0.1:3000"
+host_url = "127.0.0.1:3001"

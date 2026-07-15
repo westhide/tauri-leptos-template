@@ -1,6 +1,6 @@
 use clap::Parser;
 
-use crate::shared::{config::Config, error::Result};
+use crate::{config::Config, shared::error::Result};
 
 /// Cli
 #[derive(Debug, Parser)]

@@ -1,4 +1,5 @@
 pub mod cli;
+pub mod config;
 pub mod routes;
 #[cfg(feature = "server")]
 pub mod server;

@@ -8,5 +8,5 @@ use crate::shared::{
 // TODO: gen #[handler]
 #[instrument(level = Level::DEBUG, skip_all, ret, err)]
 pub async fn version() -> Result<String> {
-    Ok(invoke!("version")?)
+    invoke!("version")
 }

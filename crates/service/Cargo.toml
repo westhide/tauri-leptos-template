@@ -15,10 +15,6 @@ crate-type = ["cdylib", "rlib", "staticlib"]
 name              = "server"
 required-features = ["server"]
 
-[[bin]]
-name              = "pingpong"
-required-features = ["server"]
-
 
 [features]
 default = []
@@ -45,7 +41,7 @@ thiserror          = { workspace = true }
 tokio              = { workspace = true, features = ["macros", "sync", "time"] }
 tokio-util         = { workspace = true, features = ["rt"] }
 tower-http         = { workspace = true, features = ["cors"] }
-tracing            = { workspace = true, features = ["attributes", "release_max_level_info", "std"] }
+tracing            = { workspace = true, features = ["attributes", "log", "release_max_level_info", "std"] }
 tracing-subscriber = { workspace = true, features = ["ansi", "env-filter", "fmt", "smallvec", "std", "tracing-log"] }
 
 

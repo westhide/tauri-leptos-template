@@ -1,4 +1,4 @@
-use std::{ops::Deref, sync::Arc, time::Duration};
+use std::{ops::Deref, time::Duration};
 
 use tokio::time::timeout;
 use tokio_util::{sync::CancellationToken, task::TaskTracker};
@@ -7,39 +7,34 @@ use crate::{
     server::shutdown::ShutdownSignal,
     shared::{
         Null,
-        config::Config,
         error::Result,
         logger::{error, info},
     },
 };
 
-#[derive(Debug)]
-pub struct ContextInner {
-    pub config: Config,
+#[derive(Debug, Clone)]
+pub struct Context<S> {
+    pub state: S,
     pub task_tracker: TaskTracker,
     pub cancellation: CancellationToken,
 }
 
-impl ContextInner {
-    pub fn new(config: Config) -> Self {
-        Self { config, task_tracker: TaskTracker::new(), cancellation: CancellationToken::new() }
-    }
+pub trait ShutdownTimeout {
+    fn shutdown_timeout(&self) -> u64;
 }
 
-#[derive(Debug, Clone)]
-pub struct Context {
-    inner: Arc<ContextInner>,
-}
-
-impl Context {
-    pub fn new(config: Config) -> Self {
-        let inner = ContextInner::new(config);
-        Self { inner: Arc::new(inner) }
+impl<S> Context<S> {
+    pub fn new(state: S) -> Self {
+        Self { state, task_tracker: TaskTracker::new(), cancellation: CancellationToken::new() }
     }
 
-    pub fn graceful_shutdown_signal(&self) -> Result<impl Future<Output = Null> + use<>> {
-        let signal = ShutdownSignal::try_new(self.cancellation.clone())?;
-        let ctx = self.inner.clone();
+    pub fn graceful_shutdown_signal(&self) -> Result<impl Future<Output = Null> + use<S>>
+    where
+        S: Clone + ShutdownTimeout,
+    {
+        let Self { state, task_tracker, cancellation } = self.clone();
+
+        let signal = ShutdownSignal::try_new(cancellation.clone())?;
 
         Ok(async move {
             info!("Register graceful shutdown signal");
@@ -48,12 +43,12 @@ impl Context {
             info!("Shuting down...");
 
             // TODO: stop server
-            ctx.task_tracker.close();
-            ctx.cancellation.cancel();
+            task_tracker.close();
+            cancellation.cancel();
 
             info!("Shutdown tasks...");
-            let duration = Duration::from_secs(ctx.config.server.shutdown_timeout);
-            if let Err(err) = timeout(duration, ctx.task_tracker.wait()).await {
+            let duration = Duration::from_secs(state.shutdown_timeout());
+            if let Err(err) = timeout(duration, task_tracker.wait()).await {
                 error!("Shutdown timeout: {err}, forcing shutdown");
             }
 
@@ -62,10 +57,10 @@ impl Context {
     }
 }
 
-impl Deref for Context {
-    type Target = ContextInner;
+impl<S> Deref for Context<S> {
+    type Target = S;
 
     fn deref(&self) -> &Self::Target {
-        &self.inner
+        &self.state
     }
 }
