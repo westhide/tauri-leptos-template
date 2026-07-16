@@ -6516,6 +6516,7 @@ dependencies = [
 name = "webview"
 version = "0.0.1"
 dependencies = [
+ "cfg_aliases",
  "console_error_panic_hook",
  "console_log",
  "leptos",

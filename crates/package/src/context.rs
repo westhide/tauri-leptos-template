@@ -1,4 +1,5 @@
-use tauri::{App, Context, Manager, Runtime, generate_context};
+use service::{cli::Cli, server::startup::startup_grpc};
+use tauri::{App, Context, Manager, Runtime, async_runtime::spawn, generate_context};
 
 use crate::shared::{
     NULL, Null,
@@ -26,8 +27,13 @@ pub fn setup(app: &mut App) -> Result<Null, Box<dyn std::error::Error>> {
     #[cfg(debug_assertions)]
     open_devtools(app);
 
-    info!("Application Setup");
-    // service::startup()
+    info!("Application setup");
+
+    let config = Cli::load_config()?;
+
+    if !config.server.start_grpc {
+        spawn(startup_grpc(config));
+    }
 
     Ok(NULL)
 }

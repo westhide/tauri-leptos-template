@@ -10,18 +10,17 @@ use crate::shared::{error::Result, logger::info};
 pub struct ShutdownSignal {
     pub ctrl_c: Signal,
     pub sigterm: Signal,
-    pub cancellation: CancellationToken,
 }
 
 impl ShutdownSignal {
-    pub fn try_new(cancellation: CancellationToken) -> Result<Self> {
+    pub fn new() -> Result<Self> {
         let ctrl_c = signal(SignalKind::interrupt())?;
         let sigterm = signal(SignalKind::terminate())?;
-        Ok(Self { ctrl_c, sigterm, cancellation })
+        Ok(Self { ctrl_c, sigterm })
     }
 
-    pub async fn wait(self) {
-        let Self { mut ctrl_c, mut sigterm, cancellation } = self;
+    pub async fn wait_with_cancel(self, cancellation: CancellationToken) {
+        let Self { mut ctrl_c, mut sigterm } = self;
 
         select! {
             _ = ctrl_c.recv() => {

@@ -4,7 +4,10 @@ use leptos::{
     config::errors::LeptosConfigError, serde_json::Error as JsonError, wasm_bindgen::JsValue,
 };
 use libgrpc::tonic::Status as GrpcStatus;
-use service::shared::error::{Error as ServiceError, ServerFnError};
+use service::{
+    axum::http::uri::InvalidUri as HttpInvalidUri,
+    shared::error::{Error as ServiceError, ServerFnError},
+};
 
 use crate::shared::logger::log::ParseLevelError as LogParseLevelError;
 
@@ -16,6 +19,9 @@ pub enum Error {
 
     #[error(transparent)]
     GrpcStatus(#[from] GrpcStatus),
+
+    #[error(transparent)]
+    HttpInvalidUri(#[from] HttpInvalidUri),
 
     #[error("{0}")]
     JsError(String),

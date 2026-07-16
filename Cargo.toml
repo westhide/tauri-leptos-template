@@ -35,6 +35,7 @@ tracing            = { default-features = false, version = "0.1" }
 tracing-subscriber = { default-features = false, version = "0.3" }
 
 # Build
+cfg_aliases = { default-features = false, version = "0.2" }
 
 # Test
 insta = { default-features = false, version = "1.44" }

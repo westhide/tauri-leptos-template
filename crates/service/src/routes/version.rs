@@ -6,6 +6,7 @@ use crate::shared::{
 };
 
 // TODO: route #[get("/version")]
+// TODO: server args #[server(State(..), Extension(..))]
 // TODO: Fix macro order
 #[instrument(level = Level::DEBUG, skip_all, ret)]
 #[server(input= Json)]

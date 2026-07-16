@@ -22,7 +22,7 @@ workspace = true
 
 [dependencies]
 libgrpc = { workspace = true, features = ["router", "transport"] }
-service = { workspace = true }
+service = { workspace = true, features = ["server"] }
 
 serde   = { workspace = true, features = ["derive"] }
 tokio   = { workspace = true, features = ["macros", "net", "rt-multi-thread", "sync"] }

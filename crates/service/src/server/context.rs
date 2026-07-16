@@ -1,9 +1,13 @@
 use std::{ops::Deref, time::Duration};
 
+use axum::extract::FromRef;
+use leptos::{config::LeptosOptions, context::provide_context, nonce::Nonce};
 use tokio::time::timeout;
 use tokio_util::{sync::CancellationToken, task::TaskTracker};
 
 use crate::{
+    config::Config,
+    impl_from_ctx,
     server::shutdown::ShutdownSignal,
     shared::{
         Null,
@@ -19,6 +23,14 @@ pub struct Context<S> {
     pub cancellation: CancellationToken,
 }
 
+impl<S> Deref for Context<S> {
+    type Target = S;
+
+    fn deref(&self) -> &Self::Target {
+        &self.state
+    }
+}
+
 pub trait ShutdownTimeout {
     fn shutdown_timeout(&self) -> u64;
 }
@@ -28,17 +40,32 @@ impl<S> Context<S> {
         Self { state, task_tracker: TaskTracker::new(), cancellation: CancellationToken::new() }
     }
 
+    pub fn provide_context_hook(&self) -> impl Fn() + Clone + Send + 'static
+    where
+        S: Clone + Send + Sync + 'static,
+        Config: FromRef<S>,
+    {
+        let Context { state, task_tracker, cancellation } = self.clone();
+        let config = Config::from_ref(&state);
+        move || {
+            provide_context(state.clone());
+            provide_context(config.clone());
+            provide_context(task_tracker.clone());
+            provide_context(cancellation.clone());
+        }
+    }
+
     pub fn graceful_shutdown_signal(&self) -> Result<impl Future<Output = Null> + use<S>>
     where
         S: Clone + ShutdownTimeout,
     {
         let Self { state, task_tracker, cancellation } = self.clone();
 
-        let signal = ShutdownSignal::try_new(cancellation.clone())?;
+        let signal = ShutdownSignal::new()?;
 
         Ok(async move {
             info!("Register graceful shutdown signal");
-            signal.wait().await;
+            signal.wait_with_cancel(cancellation.clone()).await;
 
             info!("Shuting down...");
 
@@ -57,10 +84,19 @@ impl<S> Context<S> {
     }
 }
 
-impl<S> Deref for Context<S> {
-    type Target = S;
-
-    fn deref(&self) -> &Self::Target {
-        &self.state
+impl<S> FromRef<Context<S>> for LeptosOptions
+where
+    LeptosOptions: FromRef<S>,
+{
+    fn from_ref(ctx: &Context<S>) -> Self {
+        Self::from_ref(&ctx.state)
     }
 }
+
+// Safety: Nonce provided
+impl_from_ctx!(Nonce);
+
+// Unsafe: must call provide_context() hook
+impl_from_ctx!(Config);
+impl_from_ctx!(TaskTracker);
+impl_from_ctx!(CancellationToken);

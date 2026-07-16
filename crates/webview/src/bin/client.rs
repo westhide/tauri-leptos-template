@@ -1,12 +1,10 @@
 use leptos::prelude::*;
-use webview::{
-    shared::logger::{info, init_console_log},
-    views::Main,
-};
+use tracing::{info, log::Level};
+use webview::{shared::logger::init_logger, views::Main};
 
 // #[tokio::main(flavor = "current_thread")] async
 fn main() {
-    init_console_log("info").ok();
+    init_logger(Level::Info);
 
     info!("Webview startup");
 

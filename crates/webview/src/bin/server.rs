@@ -2,14 +2,14 @@ use leptos::config::get_config_from_env;
 use service::{
     axum::serve,
     cli::Cli,
-    server::{context::Context, router::router},
+    server::{context::Context, router::router, startup::startup_grpc},
     shared::logger::init_logger,
 };
-use tokio::net::TcpListener;
+use tokio::{net::TcpListener, spawn};
 use tracing::{debug, info};
 use webview::{
+    bootstrap::shell::shell,
     shared::{NULL, Null, error::Error},
-    shell,
     state::State,
 };
 
@@ -19,11 +19,15 @@ async fn main() -> Result<Null, Error> {
 
     init_logger(config.logger.level)?;
 
-    info!("Server start");
-    debug!("{config:?}");
+    if config.server.start_grpc {
+        spawn(startup_grpc(config.clone()));
+    }
+
+    info!("Ssr server start");
+    debug!(?config);
 
     let options = get_config_from_env()?.leptos_options;
-    info!("SSR options: {options:?}");
+    info!("Ssr options: {options:?}");
 
     let listener = TcpListener::bind(options.site_addr).await?;
 
@@ -33,9 +37,9 @@ async fn main() -> Result<Null, Error> {
 
     let router = router(context, shell).await?;
 
-    info!("Server listen on http://{}", listener.local_addr()?);
+    info!("Ssr server listen on http://{}", listener.local_addr()?);
     serve(listener, router).with_graceful_shutdown(shutdown_signal).await?;
 
-    info!("Server shutdown");
+    info!("Ssr server shutdown");
     Ok(NULL)
 }

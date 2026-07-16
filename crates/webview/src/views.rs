@@ -3,26 +3,45 @@ pub mod home;
 pub mod pingpong;
 pub mod version;
 
-use leptos::prelude::*;
+use leptos::{prelude::*, task::spawn_local};
 use leptos_meta::provide_meta_context;
 use leptos_router::{
-    components::{Route, Router, Routes},
+    SsrMode,
+    components::{A, Route, Router, Routes},
     path,
+    static_routes::StaticRoute,
 };
 
+#[cfg(client)]
+use crate::bootstrap::hydrate::hydrate_hook;
 use crate::views::{fallback::Fallback, home::Home, pingpong::PingPong, version::Version};
 
 #[component]
 pub fn Main() -> impl IntoView {
     provide_meta_context();
 
+    #[cfg(client)]
+    spawn_local(async {
+        hydrate_hook().await.unwrap();
+    });
+
     view! {
         <Router>
+            <nav class="nav">
+                <A href="/">"Home"</A>
+                <A href="/version">"Version"</A>
+                <A href="/pingpong">"PingPong"</A>
+            </nav>
             <main class="container">
                 <Routes fallback=Fallback>
                     <Route path=path!("/") view=Home />
                     <Route path=path!("/version") view=Version />
                     <Route path=path!("/pingpong") view=PingPong />
+                    <Route
+                        path=path!("/fallback")
+                        view=Fallback
+                        ssr=SsrMode::Static(StaticRoute::default())
+                    />
                 </Routes>
             </main>
         </Router>
