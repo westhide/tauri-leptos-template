@@ -30,7 +30,7 @@ workspace = true
 [dependencies]
 libgrpc = { workspace = true, features = ["gzip"] }
 
-axum               = { workspace = true, features = ["http2", "query", "tracing"] }
+axum               = { workspace = true, features = ["http2", "macros", "query", "tower-log", "tracing"] }
 clap               = { workspace = true, features = ["color", "derive", "env", "error-context", "help", "std", "suggestions", "usage"] }
 config             = { workspace = true, features = ["toml"] }
 leptos             = { workspace = true, features = ["tracing"] }
