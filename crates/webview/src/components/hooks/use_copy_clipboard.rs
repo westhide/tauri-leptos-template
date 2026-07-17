@@ -1,6 +1,4 @@
-use leptos::prelude::*;
-use leptos::wasm_bindgen::prelude::*;
-use leptos::web_sys::window;
+use leptos::{prelude::*, wasm_bindgen::prelude::*, web_sys::window};
 
 const DEFAULT_TIMEOUT_MS: i32 = 2000;
 
@@ -29,8 +27,10 @@ pub fn use_copy_clipboard(timeout_ms: Option<i32>) -> (impl Fn(&str) + Clone, Re
                 let closure = Closure::once_into_js(move || {
                     let _ = copied_clone.try_set(false);
                 });
-                let _ = window
-                    .set_timeout_with_callback_and_timeout_and_arguments_0(closure.as_ref().unchecked_ref(), timeout);
+                let _ = window.set_timeout_with_callback_and_timeout_and_arguments_0(
+                    closure.as_ref().unchecked_ref(),
+                    timeout,
+                );
             }
         }
     };

@@ -1,9 +1,10 @@
-use leptos::prelude::*;
-use leptos::wasm_bindgen::closure::Closure;
-use leptos::wasm_bindgen::JsCast;
-use leptos::wasm_bindgen;
-use leptos::web_sys::KeyboardEvent;
-use leptos::web_sys;
+use leptos::{
+    prelude::*,
+    wasm_bindgen,
+    wasm_bindgen::{JsCast, closure::Closure},
+    web_sys,
+    web_sys::KeyboardEvent,
+};
 
 /// Undo/redo history stack for URL-based state.
 ///
@@ -39,8 +40,11 @@ impl UseHistory {
     /// Sets up `⌘Z` / `⌘⇧Z` / `⌃Y` keyboard shortcuts on the document.
     #[must_use]
     pub fn init() -> Self {
-        let hook =
-            Self { history: RwSignal::new(Vec::new()), index: RwSignal::new(0), is_navigating: RwSignal::new(false) };
+        let hook = Self {
+            history: RwSignal::new(Vec::new()),
+            index: RwSignal::new(0),
+            is_navigating: RwSignal::new(false),
+        };
 
         provide_context(hook);
 
@@ -77,7 +81,8 @@ impl UseHistory {
             });
 
             if let Some(document) = window().document() {
-                let _ = document.add_event_listener_with_callback("keydown", closure.as_ref().unchecked_ref());
+                let _ = document
+                    .add_event_listener_with_callback("keydown", closure.as_ref().unchecked_ref());
             }
 
             closure.forget();
@@ -169,9 +174,9 @@ impl UseHistory {
         Signal::derive(move || history.with(|h| h.get(index.get()).cloned().unwrap_or_default()))
     }
 
-    /* ========================================================== */
-    /*                     ✨ FUNCTIONS ✨                        */
-    /* ========================================================== */
+    // ==========================================================
+    // ✨ FUNCTIONS ✨
+    // ==========================================================
 
     fn replace_state(url: &str) {
         let Ok(history) = window().history() else { return };

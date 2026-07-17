@@ -1,6 +1,7 @@
-use leptos::prelude::*;
-use leptos::wasm_bindgen::closure::Closure;
-use leptos::wasm_bindgen::{JsCast, JsValue};
+use leptos::{
+    prelude::*,
+    wasm_bindgen::{JsCast, JsValue, closure::Closure},
+};
 
 /// Reactive hook that tracks whether a CSS media query matches.
 ///

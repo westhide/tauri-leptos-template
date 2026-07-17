@@ -1,8 +1,9 @@
-use leptos::html::Div;
-use leptos::prelude::*;
+use leptos::{
+    html::Div,
+    prelude::*,
+    web_sys::{Element, Event, wasm_bindgen::JsCast},
+};
 use strum::Display;
-use leptos::web_sys::wasm_bindgen::JsCast;
-use leptos::web_sys::{Element, Event};
 
 const DEFAULT_SCROLL_PERCENTAGE: f64 = 0.5;
 const DEFAULT_UPDATE_DELAY_MS: u64 = 300;
