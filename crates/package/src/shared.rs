@@ -1,5 +1,4 @@
 pub mod logger;
 
-pub type Null = ();
-
-pub const NULL: Null = ();
+pub(crate) type Null = ();
+pub(crate) const NULL: Null = ();

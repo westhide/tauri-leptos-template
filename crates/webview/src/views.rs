@@ -1,3 +1,5 @@
+pub mod error;
+pub mod failure;
 pub mod fallback;
 pub mod home;
 pub mod pingpong;
@@ -14,7 +16,10 @@ use leptos_router::{
 
 #[cfg(client)]
 use crate::bootstrap::hydrate::hydrate_hook;
-use crate::views::{fallback::Fallback, home::Home, pingpong::PingPong, version::Version};
+use crate::views::{
+    error::ErrorPage, failure::Failure, fallback::Fallback, home::Home, pingpong::PingPong,
+    version::Version,
+};
 
 #[component]
 pub fn HydrationHook() -> impl IntoView {
@@ -33,18 +38,23 @@ pub fn Main() -> impl IntoView {
                 <A href="/version">"Version"</A>
                 <A href="/pingpong">"PingPong"</A>
             </nav>
-            <main class="container">
-                <Routes fallback=Fallback>
-                    <Route path=path!("/") view=Home />
-                    <Route path=path!("/version") view=Version />
-                    <Route path=path!("/pingpong") view=PingPong />
-                    <Route
-                        path=path!("/fallback")
-                        view=Fallback
-                        ssr=SsrMode::Static(StaticRoute::default())
-                    />
-                </Routes>
-            </main>
+            <ErrorBoundary fallback=|errors| {
+                view! { <Failure errors=errors /> }
+            }>
+                <main class="container">
+                    <Routes fallback=Fallback>
+                        <Route path=path!("/") view=Home />
+                        <Route path=path!("/version") view=Version />
+                        <Route path=path!("/pingpong") view=PingPong />
+                        <Route path=path!("/error") view=ErrorPage />
+                        <Route
+                            path=path!("/fallback")
+                            view=Fallback
+                            ssr=SsrMode::Static(StaticRoute::default())
+                        />
+                    </Routes>
+                </main>
+            </ErrorBoundary>
         </Router>
         <HydrationHook />
     }

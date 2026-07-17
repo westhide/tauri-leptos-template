@@ -42,6 +42,8 @@ insta = { default-features = false, version = "1.44" }
 
 
 [patch.crates-io]
+tonic     = { version = "0.14", git = "ssh://git@github.com/h3clabs/grpc-rust.git", branch = "master" }
+tonic-web = { version = "0.14", git = "ssh://git@github.com/h3clabs/grpc-rust.git", branch = "master" }
 
 
 [workspace.lints.clippy]

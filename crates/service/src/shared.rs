@@ -3,5 +3,5 @@ pub mod error;
 pub mod logger;
 pub mod malloc;
 
-pub type Null = ();
-pub const NULL: Null = ();
+pub(crate) type Null = ();
+pub(crate) const NULL: Null = ();
