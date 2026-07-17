@@ -1,4 +1,5 @@
 pub mod client;
+pub mod consts;
 pub mod error;
 #[cfg(client)]
 pub mod invoke;
