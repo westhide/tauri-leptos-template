@@ -1,11 +1,10 @@
-use leptos::ev;
-use leptos::prelude::*;
+use leptos::{ev, prelude::*};
 use leptos_ui::clx;
 use tw_merge::tw_merge;
 
-/* ========================================================== */
-/*                       Enums                                */
-/* ========================================================== */
+// ==========================================================
+// Enums
+// ==========================================================
 
 #[derive(Clone, Copy, PartialEq, Eq, Default, strum::Display)]
 pub enum MarkerVariant {
@@ -15,9 +14,9 @@ pub enum MarkerVariant {
     Border,
 }
 
-/* ========================================================== */
-/*                     Components (clx!)                      */
-/* ========================================================== */
+// ==========================================================
+// Components (clx!)
+// ==========================================================
 
 mod components {
     use super::*;
@@ -32,9 +31,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn MarkerIcon(#[prop(optional, into)] class: String, children: Children) -> impl IntoView {
@@ -86,24 +85,28 @@ pub fn Marker(
             </a>
         }
         .into_any(),
-        (_, Some(cb)) => view! {
-            <button
-                type="button"
-                class=merged_class
-                data-name="Marker"
-                data-variant=variant_str
-                role=role
-                on:click=move |e| cb.run(e)
-            >
-                {children()}
-            </button>
-        }
-        .into_any(),
-        _ => view! {
-            <div class=merged_class data-name="Marker" data-variant=variant_str role=role>
-                {children()}
-            </div>
-        }
-        .into_any(),
+        (_, Some(cb)) => {
+            view! {
+                <button
+                    type="button"
+                    class=merged_class
+                    data-name="Marker"
+                    data-variant=variant_str
+                    role=role
+                    on:click=move |e| cb.run(e)
+                >
+                    {children()}
+                </button>
+            }
+            .into_any()
+        },
+        _ => {
+            view! {
+                <div class=merged_class data-name="Marker" data-variant=variant_str role=role>
+                    {children()}
+                </div>
+            }
+            .into_any()
+        },
     }
 }

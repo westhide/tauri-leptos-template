@@ -1,11 +1,12 @@
 use icons::X;
-use leptos::context::Provider;
-use leptos::prelude::*;
+use leptos::{context::Provider, prelude::*};
 use leptos_ui::clx;
 use tw_merge::*;
 
-use crate::components::hooks::use_random::use_random_id_for;
-use crate::components::ui::button::{Button, ButtonSize, ButtonVariant};
+use crate::components::{
+    hooks::use_random::use_random_id_for,
+    ui::button::{Button, ButtonSize, ButtonVariant},
+};
 
 mod components {
     use super::*;
@@ -18,9 +19,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[derive(Clone)]
 struct DialogContext {

@@ -1,10 +1,7 @@
 use icons::ChevronRight;
-use leptos::context::Provider;
-use leptos::prelude::*;
+use leptos::{context::Provider, prelude::*, wasm_bindgen::JsCast, web_sys};
 use leptos_ui::clx;
 use tw_merge::*;
-use leptos::wasm_bindgen::JsCast;
-use leptos::web_sys;
 
 use crate::components::hooks::use_random::use_random_id_for;
 
@@ -13,7 +10,10 @@ pub fn close_context_menu() {
     let Some(document) = window().document() else {
         return;
     };
-    let Some(menu) = document.query_selector("[data-target='target__context'][data-state='open']").ok().flatten()
+    let Some(menu) = document
+        .query_selector("[data-target='target__context'][data-state='open']")
+        .ok()
+        .flatten()
     else {
         return;
     };
@@ -339,7 +339,10 @@ pub fn ContextMenuSub(children: Children) -> impl IntoView {
 }
 
 #[component]
-pub fn ContextMenuSubTrigger(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
+pub fn ContextMenuSubTrigger(
+    children: Children,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView {
     let class = tw_merge!("flex items-center justify-between w-full", class);
 
     view! {
@@ -351,7 +354,10 @@ pub fn ContextMenuSubTrigger(children: Children, #[prop(optional, into)] class: 
 }
 
 #[component]
-pub fn ContextMenuSubItem(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
+pub fn ContextMenuSubItem(
+    children: Children,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView {
     let class = tw_merge!(
         "inline-flex gap-2 items-center w-full rounded-sm px-3 py-2 text-sm transition-all duration-150 ease text-popover-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer hover:translate-x-[2px]",
         class

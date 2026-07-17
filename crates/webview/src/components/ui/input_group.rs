@@ -2,8 +2,10 @@ use leptos::prelude::*;
 use leptos_ui::{clx, variants};
 use tw_merge::{TwClass, TwVariant, tw_merge};
 
-use crate::components::ui::input::{Input, InputType};
-use crate::components::ui::textarea::Textarea;
+use crate::components::ui::{
+    input::{Input, InputType},
+    textarea::Textarea,
+};
 
 mod components {
     use super::*;
@@ -12,9 +14,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn InputGroup(#[prop(into, optional)] class: String, children: Children) -> impl IntoView {
@@ -73,9 +75,13 @@ pub enum InputGroupAddonAlign {
     InlineStart,
     #[tw(class = "order-last pr-3 has-[>button]:mr-[-0.45rem] has-[>kbd]:mr-[-0.35rem]")]
     InlineEnd,
-    #[tw(class = "order-first w-full justify-start px-3 pt-3 [.border-b]:pb-3 group-has-[>input]/input-group:pt-2.5")]
+    #[tw(
+        class = "order-first w-full justify-start px-3 pt-3 [.border-b]:pb-3 group-has-[>input]/input-group:pt-2.5"
+    )]
     BlockStart,
-    #[tw(class = "order-last w-full justify-start px-3 pb-3 [.border-t]:pt-3 group-has-[>input]/input-group:pb-2.5")]
+    #[tw(
+        class = "order-last w-full justify-start px-3 pb-3 [.border-t]:pt-3 group-has-[>input]/input-group:pb-2.5"
+    )]
     BlockEnd,
 }
 

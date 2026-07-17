@@ -1,5 +1,4 @@
-use leptos::html;
-use leptos::prelude::*;
+use leptos::{html, prelude::*};
 use tw_merge::tw_merge;
 
 #[component]
@@ -29,38 +28,42 @@ pub fn Textarea(
     );
 
     match bind_value {
-        Some(signal) => view! {
-            <textarea
-                data-name="Textarea"
-                class=merged_class
-                placeholder=placeholder
-                name=name
-                id=id
-                disabled=disabled
-                readonly=readonly
-                required=required
-                autofocus=autofocus
-                rows=rows
-                bind:value=signal
-                node_ref=node_ref
-            />
-        }
-        .into_any(),
-        None => view! {
-            <textarea
-                data-name="Textarea"
-                class=merged_class
-                placeholder=placeholder
-                name=name
-                id=id
-                disabled=disabled
-                readonly=readonly
-                required=required
-                autofocus=autofocus
-                rows=rows
-                node_ref=node_ref
-            />
-        }
-        .into_any(),
+        Some(signal) => {
+            view! {
+                <textarea
+                    data-name="Textarea"
+                    class=merged_class
+                    placeholder=placeholder
+                    name=name
+                    id=id
+                    disabled=disabled
+                    readonly=readonly
+                    required=required
+                    autofocus=autofocus
+                    rows=rows
+                    bind:value=signal
+                    node_ref=node_ref
+                />
+            }
+            .into_any()
+        },
+        None => {
+            view! {
+                <textarea
+                    data-name="Textarea"
+                    class=merged_class
+                    placeholder=placeholder
+                    name=name
+                    id=id
+                    disabled=disabled
+                    readonly=readonly
+                    required=required
+                    autofocus=autofocus
+                    rows=rows
+                    node_ref=node_ref
+                />
+            }
+            .into_any()
+        },
     }
 }

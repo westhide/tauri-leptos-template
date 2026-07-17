@@ -1,13 +1,12 @@
 use icons::{ChevronLeft, ChevronRight};
-use leptos::context::Provider;
-use leptos::prelude::*;
+use leptos::{context::Provider, prelude::*};
 use tw_merge::*;
 
 use crate::components::hooks::use_random::use_random_id_for;
 
-/* ========================================================== */
-/*                     CAROUSEL CONTEXT                       */
-/* ========================================================== */
+// ==========================================================
+// CAROUSEL CONTEXT
+// ==========================================================
 
 #[derive(Clone, Copy, PartialEq, Default)]
 pub enum CarouselOrientation {
@@ -22,9 +21,9 @@ struct CarouselContext {
     orientation: CarouselOrientation,
 }
 
-/* ========================================================== */
-/*                     CAROUSEL ROOT                          */
-/* ========================================================== */
+// ==========================================================
+// CAROUSEL ROOT
+// ==========================================================
 
 #[component]
 pub fn Carousel(
@@ -157,9 +156,9 @@ pub fn Carousel(
     }
 }
 
-/* ========================================================== */
-/*                     CAROUSEL CONTENT                       */
-/* ========================================================== */
+// ==========================================================
+// CAROUSEL CONTENT
+// ==========================================================
 
 #[component]
 pub fn CarouselContent(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
@@ -169,10 +168,13 @@ pub fn CarouselContent(children: Children, #[prop(optional, into)] class: String
     let (scroll_class, inner_class) = match ctx.orientation {
         CarouselOrientation::Horizontal => {
             ("overflow-x-auto snap-x snap-mandatory scroll-smooth", tw_merge!("flex -ml-4", class))
-        }
+        },
         CarouselOrientation::Vertical => {
-            ("overflow-y-auto snap-y snap-mandatory scroll-smooth", tw_merge!("flex flex-col -mt-4", class))
-        }
+            (
+                "overflow-y-auto snap-y snap-mandatory scroll-smooth",
+                tw_merge!("flex flex-col -mt-4", class),
+            )
+        },
     };
 
     view! {
@@ -186,9 +188,9 @@ pub fn CarouselContent(children: Children, #[prop(optional, into)] class: String
     }
 }
 
-/* ========================================================== */
-/*                     CAROUSEL ITEM                          */
-/* ========================================================== */
+// ==========================================================
+// CAROUSEL ITEM
+// ==========================================================
 
 #[component]
 pub fn CarouselItem(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
@@ -208,9 +210,9 @@ pub fn CarouselItem(children: Children, #[prop(optional, into)] class: String) -
     }
 }
 
-/* ========================================================== */
-/*                     CAROUSEL PREVIOUS                      */
-/* ========================================================== */
+// ==========================================================
+// CAROUSEL PREVIOUS
+// ==========================================================
 
 #[component]
 pub fn CarouselPrevious(#[prop(optional, into)] class: String) -> impl IntoView {
@@ -235,9 +237,9 @@ pub fn CarouselPrevious(#[prop(optional, into)] class: String) -> impl IntoView 
     }
 }
 
-/* ========================================================== */
-/*                     CAROUSEL NEXT                          */
-/* ========================================================== */
+// ==========================================================
+// CAROUSEL NEXT
+// ==========================================================
 
 #[component]
 pub fn CarouselNext(#[prop(optional, into)] class: String) -> impl IntoView {
@@ -262,9 +264,9 @@ pub fn CarouselNext(#[prop(optional, into)] class: String) -> impl IntoView {
     }
 }
 
-/* ========================================================== */
-/*                     CAROUSEL INDICATOR                     */
-/* ========================================================== */
+// ==========================================================
+// CAROUSEL INDICATOR
+// ==========================================================
 
 /// Displays "current / total" slide count, updated automatically by JS.
 #[component]

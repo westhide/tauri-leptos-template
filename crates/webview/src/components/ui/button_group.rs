@@ -11,9 +11,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn ButtonGroup(
@@ -34,9 +34,9 @@ pub fn ButtonGroup(
     }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[derive(TwClass, Default)]
 #[tw(
@@ -61,10 +61,13 @@ pub enum ButtonGroupOrientation {
 
 #[component]
 pub fn ButtonGroupSeparator(
-    #[prop(into, optional, default = SeparatorOrientation::Vertical.into())] orientation: Signal<SeparatorOrientation>,
+    #[prop(into, optional, default = SeparatorOrientation::Vertical.into())] orientation: Signal<
+        SeparatorOrientation,
+    >,
     #[prop(into, optional)] class: String,
 ) -> impl IntoView {
-    let merged_class = tw_merge!("relative !m-0 self-stretch data-[orientation=vertical]:h-auto", class);
+    let merged_class =
+        tw_merge!("relative !m-0 self-stretch data-[orientation=vertical]:h-auto", class);
 
     view! { <Separator attr:data-name="ButtonGroupSeparator" orientation=orientation class=merged_class /> }
 }

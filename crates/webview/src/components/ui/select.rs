@@ -1,12 +1,12 @@
 use icons::{Check, ChevronDown, ChevronUp};
-use leptos::context::Provider;
-use leptos::prelude::*;
+use leptos::{context::Provider, prelude::*};
 use leptos_ui::clx;
 use strum::{AsRefStr, Display};
 use tw_merge::*;
 
-use crate::components::hooks::use_can_scroll_vertical::use_can_scroll_vertical;
-use crate::components::hooks::use_random::use_random_id_for;
+use crate::components::hooks::{
+    use_can_scroll_vertical::use_can_scroll_vertical, use_random::use_random_id_for,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Display, AsRefStr)]
 pub enum SelectPosition {
@@ -49,9 +49,9 @@ pub fn SelectValue(#[prop(optional, into)] placeholder: String) -> impl IntoView
     }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn SelectOption(
@@ -92,9 +92,9 @@ pub fn SelectOption(
     }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[derive(Clone)]
 struct SelectContext {

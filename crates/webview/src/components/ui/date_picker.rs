@@ -22,9 +22,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn DatePickerCell(
@@ -37,14 +37,23 @@ pub fn DatePickerCell(
     on_click: impl Fn(u8) + 'static,
     #[prop(into, optional)] class: String,
 ) -> impl IntoView {
-    let current_date = if day > 0 && !disabled { Date::from_calendar_date(year, month, day).ok() } else { None };
+    let current_date =
+        if day > 0 && !disabled { Date::from_calendar_date(year, month, day).ok() } else { None };
 
     let is_current = move || {
-        if let Some(date) = current_date { date == start_date.get() || date == end_date.get() } else { false }
+        if let Some(date) = current_date {
+            date == start_date.get() || date == end_date.get()
+        } else {
+            false
+        }
     };
 
     let is_selected = move || {
-        if let Some(date) = current_date { date > start_date.get() && date < end_date.get() } else { false }
+        if let Some(date) = current_date {
+            date > start_date.get() && date < end_date.get()
+        } else {
+            false
+        }
     };
 
     let merged_class = tw_merge!(

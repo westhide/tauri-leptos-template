@@ -1,6 +1,5 @@
 use icons::Check;
-use leptos::portal::Portal;
-use leptos::prelude::*;
+use leptos::{portal::Portal, prelude::*};
 use leptos_ui::clx;
 use tw_merge::*;
 
@@ -23,9 +22,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ CONTEXT ✨                          */
-/* ========================================================== */
+// ==========================================================
+// ✨ CONTEXT ✨
+// ==========================================================
 
 #[derive(Clone)]
 struct CommandDialogContext {
@@ -38,9 +37,9 @@ struct CommandContext {
     should_filter: bool,
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn CommandDialogProvider(children: Children, #[prop(into)] id: String) -> impl IntoView {
@@ -52,7 +51,10 @@ pub fn CommandDialogProvider(children: Children, #[prop(into)] id: String) -> im
 }
 
 #[component]
-pub fn CommandDialogTrigger(children: Children, #[prop(into, optional)] class: String) -> impl IntoView {
+pub fn CommandDialogTrigger(
+    children: Children,
+    #[prop(into, optional)] class: String,
+) -> impl IntoView {
     let context = expect_context::<CommandDialogContext>();
     let trigger_id = format!("{TRIGGER_ID_QUALIFIER}__{}", context.dialog_id);
 
@@ -231,9 +233,9 @@ fn CommandDialogPortal(
     }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn Command(

@@ -43,9 +43,9 @@ pub fn DrawerClose(
     }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn Drawer(
@@ -53,7 +53,8 @@ pub fn Drawer(
     #[prop(optional, default = true)] show_overlay: bool,
     #[prop(optional, default = true)] lock_body_scroll: bool,
 ) -> impl IntoView {
-    let overlay_class = if show_overlay { "hidden fixed inset-0 z-200 bg-black/50" } else { "!hidden" };
+    let overlay_class =
+        if show_overlay { "hidden fixed inset-0 z-200 bg-black/50" } else { "!hidden" };
     let lock_scroll_attr = if lock_body_scroll { "true" } else { "false" };
 
     view! {

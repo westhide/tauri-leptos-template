@@ -1,15 +1,14 @@
 use icons::{Check, ChevronRight};
-use leptos::context::Provider;
-use leptos::prelude::*;
+use leptos::{context::Provider, prelude::*};
 use leptos_ui::clx;
 use tw_merge::*;
 
 use crate::components::hooks::use_random::use_random_id_for;
 pub use crate::components::ui::separator::Separator as MenubarSeparator;
 
-/* ========================================================== */
-/*                     SIMPLE CLX COMPONENTS                  */
-/* ========================================================== */
+// ==========================================================
+// SIMPLE CLX COMPONENTS
+// ==========================================================
 
 mod components {
     use super::*;
@@ -20,9 +19,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     MENUBAR SHORTCUT                       */
-/* ========================================================== */
+// ==========================================================
+// MENUBAR SHORTCUT
+// ==========================================================
 
 #[component]
 pub fn MenubarShortcut(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
@@ -34,9 +33,9 @@ pub fn MenubarShortcut(children: Children, #[prop(optional, into)] class: String
     }
 }
 
-/* ========================================================== */
-/*                     MENUBAR ITEM                            */
-/* ========================================================== */
+// ==========================================================
+// MENUBAR ITEM
+// ==========================================================
 
 #[component]
 pub fn MenubarItem(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
@@ -51,9 +50,9 @@ pub fn MenubarItem(children: Children, #[prop(optional, into)] class: String) ->
     }
 }
 
-/* ========================================================== */
-/*                     CHECKBOX ITEM                          */
-/* ========================================================== */
+// ==========================================================
+// CHECKBOX ITEM
+// ==========================================================
 
 #[component]
 pub fn MenubarCheckboxItem(
@@ -82,9 +81,9 @@ pub fn MenubarCheckboxItem(
     }
 }
 
-/* ========================================================== */
-/*                     RADIO GROUP                            */
-/* ========================================================== */
+// ==========================================================
+// RADIO GROUP
+// ==========================================================
 
 #[derive(Clone)]
 struct MenubarRadioContext<T: Clone + PartialEq + Send + Sync + 'static> {
@@ -108,7 +107,11 @@ where
 }
 
 #[component]
-pub fn MenubarRadioItem<T>(children: Children, value: T, #[prop(optional, into)] class: String) -> impl IntoView
+pub fn MenubarRadioItem<T>(
+    children: Children,
+    value: T,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView
 where
     T: Clone + PartialEq + Send + Sync + 'static,
 {
@@ -139,9 +142,9 @@ where
     }
 }
 
-/* ========================================================== */
-/*                     MENUBAR ROOT                           */
-/* ========================================================== */
+// ==========================================================
+// MENUBAR ROOT
+// ==========================================================
 
 #[derive(Clone)]
 struct MenubarContext {
@@ -153,7 +156,8 @@ pub fn Menubar(children: Children, #[prop(optional, into)] class: String) -> imp
     let menubar_id = use_random_id_for("menubar");
     let ctx = MenubarContext { menubar_id: menubar_id.clone() };
 
-    let class = tw_merge!("flex h-8 items-center gap-0.5 rounded-lg border bg-background p-[3px]", class);
+    let class =
+        tw_merge!("flex h-8 items-center gap-0.5 rounded-lg border bg-background p-[3px]", class);
 
     view! {
         <Provider value=ctx>
@@ -188,9 +192,9 @@ pub fn Menubar(children: Children, #[prop(optional, into)] class: String) -> imp
     }
 }
 
-/* ========================================================== */
-/*                     MENUBAR MENU                           */
-/* ========================================================== */
+// ==========================================================
+// MENUBAR MENU
+// ==========================================================
 
 #[derive(Clone)]
 struct MenubarMenuContext {
@@ -214,9 +218,9 @@ pub fn MenubarMenu(children: Children) -> impl IntoView {
     }
 }
 
-/* ========================================================== */
-/*                     MENUBAR TRIGGER                        */
-/* ========================================================== */
+// ==========================================================
+// MENUBAR TRIGGER
+// ==========================================================
 
 #[component]
 pub fn MenubarTrigger(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
@@ -240,9 +244,9 @@ pub fn MenubarTrigger(children: Children, #[prop(optional, into)] class: String)
     }
 }
 
-/* ========================================================== */
-/*                     MENUBAR CONTENT                        */
-/* ========================================================== */
+// ==========================================================
+// MENUBAR CONTENT
+// ==========================================================
 
 #[component]
 pub fn MenubarContent(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
@@ -411,9 +415,9 @@ pub fn MenubarContent(children: Children, #[prop(optional, into)] class: String)
     }
 }
 
-/* ========================================================== */
-/*                     SUBMENU                                */
-/* ========================================================== */
+// ==========================================================
+// SUBMENU
+// ==========================================================
 
 #[component]
 pub fn MenubarSub(children: Children) -> impl IntoView {
@@ -423,7 +427,10 @@ pub fn MenubarSub(children: Children) -> impl IntoView {
 }
 
 #[component]
-pub fn MenubarSubTrigger(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
+pub fn MenubarSubTrigger(
+    children: Children,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView {
     let class = tw_merge!("flex items-center justify-between w-full", class);
 
     view! {

@@ -1,9 +1,9 @@
 use leptos::prelude::*;
 use tw_merge::tw_merge;
 
-/* ========================================================== */
-/*                       Context                              */
-/* ========================================================== */
+// ==========================================================
+// Context
+// ==========================================================
 
 #[derive(Clone)]
 struct TabsCtx {
@@ -15,9 +15,9 @@ struct TabsListCtx {
     variant: TabsVariant,
 }
 
-/* ========================================================== */
-/*                       Enums                                */
-/* ========================================================== */
+// ==========================================================
+// Enums
+// ==========================================================
 
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum TabsVariant {
@@ -33,9 +33,9 @@ pub enum TabsOrientation {
     Vertical,
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn Tabs(
@@ -48,7 +48,11 @@ pub fn Tabs(
     provide_context(TabsCtx { selected });
 
     let is_horizontal = orientation == TabsOrientation::Horizontal;
-    let class = tw_merge!("group/tabs flex gap-2", if is_horizontal { "flex-col" } else { "flex-row" }, class);
+    let class = tw_merge!(
+        "group/tabs flex gap-2",
+        if is_horizontal { "flex-col" } else { "flex-row" },
+        class
+    );
 
     view! {
         <div class=class data-name="Tabs" data-orientation=if is_horizontal { "Horizontal" } else { "Vertical" }>

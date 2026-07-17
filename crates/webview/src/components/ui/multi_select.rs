@@ -1,13 +1,12 @@
 use std::collections::HashSet;
 
 use icons::{Check, ChevronDown, ChevronUp};
-use leptos::context::Provider;
-use leptos::prelude::*;
+use leptos::{context::Provider, prelude::*, web_sys};
 use tw_merge::*;
-use leptos::web_sys;
 
-use crate::components::hooks::use_can_scroll_vertical::use_can_scroll_vertical;
-use crate::components::hooks::use_random::use_random_id_for;
+use crate::components::hooks::{
+    use_can_scroll_vertical::use_can_scroll_vertical, use_random::use_random_id_for,
+};
 // * Reuse @select.rs
 pub use crate::components::ui::select::{
     SelectGroup as MultiSelectGroup, SelectItem as MultiSelectItem, SelectLabel as MultiSelectLabel,
@@ -28,9 +27,9 @@ pub enum MultiSelectPosition {
     Above,
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn MultiSelectValue(#[prop(optional, into)] placeholder: String) -> impl IntoView {
@@ -102,9 +101,9 @@ pub fn MultiSelectOption(
     }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[derive(Clone)]
 struct MultiSelectContext {
@@ -122,7 +121,8 @@ pub fn MultiSelect(
     let multi_select_target_id = use_random_id_for("multi_select");
     let values_signal = values.unwrap_or_else(|| RwSignal::new(HashSet::<String>::new()));
 
-    let multi_select_ctx = MultiSelectContext { target_id: multi_select_target_id, values_signal, align };
+    let multi_select_ctx =
+        MultiSelectContext { target_id: multi_select_target_id, values_signal, align };
 
     view! {
         <Provider value=multi_select_ctx>
@@ -149,7 +149,8 @@ pub fn MultiSelectTrigger(
         class
     );
 
-    let button_id = if !id.is_empty() { id } else { format!("trigger_{}", multi_select_ctx.target_id) };
+    let button_id =
+        if !id.is_empty() { id } else { format!("trigger_{}", multi_select_ctx.target_id) };
 
     view! {
         <button
@@ -167,7 +168,10 @@ pub fn MultiSelectTrigger(
 }
 
 #[component]
-pub fn MultiSelectContent(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
+pub fn MultiSelectContent(
+    children: Children,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView {
     let multi_select_ctx = expect_context::<MultiSelectContext>();
 
     let align_str = match multi_select_ctx.align {

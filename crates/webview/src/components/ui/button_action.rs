@@ -1,8 +1,10 @@
 use leptos::prelude::*;
 use tw_merge::tw_merge;
 
-use crate::components::hooks::use_press_hold::use_press_hold;
-use crate::components::ui::button::{Button, ButtonSize, ButtonVariant};
+use crate::components::{
+    hooks::use_press_hold::use_press_hold,
+    ui::button::{Button, ButtonSize, ButtonVariant},
+};
 
 /// A button that requires press-and-hold to activate.
 /// Shows a progress indicator filling from left to right.
@@ -18,8 +20,10 @@ pub fn ButtonAction(
 ) -> impl IntoView {
     let press_hold = use_press_hold(duration_ms, on_complete, disabled);
 
-    let button_class =
-        tw_merge!("relative overflow-hidden select-none active:scale-[0.99] transition-transform", class);
+    let button_class = tw_merge!(
+        "relative overflow-hidden select-none active:scale-[0.99] transition-transform",
+        class
+    );
 
     let progress_style = move || {
         let width_percent = press_hold.progress_signal.get() * 100.0;

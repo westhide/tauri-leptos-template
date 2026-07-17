@@ -1,8 +1,9 @@
-use leptos::prelude::*;
-use leptos::wasm_bindgen::closure::Closure;
+use leptos::{
+    prelude::*,
+    wasm_bindgen::{JsCast, closure::Closure},
+    web_sys::{DragEvent, Element, HtmlElement},
+};
 use leptos_ui::clx;
-use leptos::wasm_bindgen::JsCast;
-use leptos::web_sys::{DragEvent, Element, HtmlElement};
 
 mod components {
     use super::*;
@@ -11,9 +12,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ COMPONENTS ✨                       */
-/* ========================================================== */
+// ==========================================================
+// ✨ COMPONENTS ✨
+// ==========================================================
 
 /// Outer wrapper. Sets up drag event delegation on `document` via `Effect::new`,
 /// which runs after Leptos WASM hydration — so listeners are never stripped by
@@ -31,7 +32,8 @@ pub fn Draggable(#[prop(into, optional)] class: String, children: Children) -> i
                 let _ = el.class_list().add_1("dragging");
             }
         });
-        let _ = document.add_event_listener_with_callback("dragstart", dragstart.as_ref().unchecked_ref());
+        let _ = document
+            .add_event_listener_with_callback("dragstart", dragstart.as_ref().unchecked_ref());
         dragstart.forget();
 
         // dragend — unmark the dragged element
@@ -42,7 +44,8 @@ pub fn Draggable(#[prop(into, optional)] class: String, children: Children) -> i
                 let _ = el.class_list().remove_1("dragging");
             }
         });
-        let _ = document.add_event_listener_with_callback("dragend", dragend.as_ref().unchecked_ref());
+        let _ =
+            document.add_event_listener_with_callback("dragend", dragend.as_ref().unchecked_ref());
         dragend.forget();
 
         // dragover — move the dragging element to the correct position in the zone
@@ -57,12 +60,14 @@ pub fn Draggable(#[prop(into, optional)] class: String, children: Children) -> i
 
             let after = get_drag_after_element(&container, f64::from(e.client_y()));
             if let Some(after_el) = after {
-                let _ = container.insert_before(dragging.unchecked_ref(), Some(after_el.unchecked_ref()));
+                let _ = container
+                    .insert_before(dragging.unchecked_ref(), Some(after_el.unchecked_ref()));
             } else {
                 let _ = container.append_child(dragging.unchecked_ref());
             }
         });
-        let _ = document.add_event_listener_with_callback("dragover", dragover.as_ref().unchecked_ref());
+        let _ = document
+            .add_event_listener_with_callback("dragover", dragover.as_ref().unchecked_ref());
         dragover.forget();
     });
 
@@ -88,9 +93,9 @@ pub fn DraggableItem(#[prop(into)] text: String) -> impl IntoView {
     }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 /// Returns the element after which the dragged item should be inserted,
 /// based on the cursor's Y position. Returns `None` to append at the end.

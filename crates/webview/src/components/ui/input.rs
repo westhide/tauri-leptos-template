@@ -1,5 +1,4 @@
-use leptos::html;
-use leptos::prelude::*;
+use leptos::{html, prelude::*};
 use strum::AsRefStr;
 use tw_merge::tw_merge;
 
@@ -66,50 +65,54 @@ pub fn Input(
     let type_str = r#type.as_ref();
 
     match bind_value {
-        Some(signal) => view! {
-            <input
-                data-name="Input"
-                type=type_str
-                class=merged_class
-                placeholder=placeholder
-                name=name
-                id=id
-                title=title
-                autocomplete=autocomplete
-                disabled=disabled
-                readonly=readonly
-                required=required
-                autofocus=autofocus
-                minlength=minlength
-                min=min
-                max=max
-                step=step
-                bind:value=signal
-                node_ref=node_ref
-            />
-        }
-        .into_any(),
-        None => view! {
-            <input
-                data-name="Input"
-                type=type_str
-                class=merged_class
-                placeholder=placeholder
-                name=name
-                id=id
-                title=title
-                autocomplete=autocomplete
-                disabled=disabled
-                readonly=readonly
-                required=required
-                autofocus=autofocus
-                minlength=minlength
-                min=min
-                max=max
-                step=step
-                node_ref=node_ref
-            />
-        }
-        .into_any(),
+        Some(signal) => {
+            view! {
+                <input
+                    data-name="Input"
+                    type=type_str
+                    class=merged_class
+                    placeholder=placeholder
+                    name=name
+                    id=id
+                    title=title
+                    autocomplete=autocomplete
+                    disabled=disabled
+                    readonly=readonly
+                    required=required
+                    autofocus=autofocus
+                    minlength=minlength
+                    min=min
+                    max=max
+                    step=step
+                    bind:value=signal
+                    node_ref=node_ref
+                />
+            }
+            .into_any()
+        },
+        None => {
+            view! {
+                <input
+                    data-name="Input"
+                    type=type_str
+                    class=merged_class
+                    placeholder=placeholder
+                    name=name
+                    id=id
+                    title=title
+                    autocomplete=autocomplete
+                    disabled=disabled
+                    readonly=readonly
+                    required=required
+                    autofocus=autofocus
+                    minlength=minlength
+                    min=min
+                    max=max
+                    step=step
+                    node_ref=node_ref
+                />
+            }
+            .into_any()
+        },
     }
 }

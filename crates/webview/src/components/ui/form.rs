@@ -5,10 +5,10 @@ use strum::Display;
 use tw_merge::tw_merge;
 use validator::Validate;
 
-use crate::components::hooks::use_form::{FieldContext, Form as FormHook, FormContext};
-use crate::components::ui::input::Input;
-use crate::components::ui::label::Label;
-use crate::components::ui::separator::Separator;
+use crate::components::{
+    hooks::use_form::{FieldContext, Form as FormHook, FormContext},
+    ui::{input::Input, label::Label, separator::Separator},
+};
 
 mod components {
     use super::*;
@@ -22,9 +22,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn FormProvider<T>(form: FormHook<T>, children: Children) -> impl IntoView
@@ -62,9 +62,9 @@ pub fn Form(#[prop(into, optional)] class: String, children: Children) -> impl I
     view! { <form class=merged_class>{children()}</form> }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[derive(Clone, Copy, PartialEq, Eq, Display)]
 pub enum FormLegendVariant {
@@ -78,8 +78,10 @@ pub fn FormLegend(
     #[prop(default = FormLegendVariant::Legend)] variant: FormLegendVariant,
     children: Children,
 ) -> impl IntoView {
-    let merged_class =
-        tw_merge!("mb-3 font-medium data-[variant=Legend]:text-base data-[variant=Label]:text-sm", class);
+    let merged_class = tw_merge!(
+        "mb-3 font-medium data-[variant=Legend]:text-base data-[variant=Label]:text-sm",
+        class
+    );
 
     view! {
         <legend data-name="FormLegend" attr:data-variant=variant.to_string() class=merged_class>
@@ -138,7 +140,10 @@ pub fn FormSeparator(
 ) -> impl IntoView {
     let has_content = children.is_some();
 
-    let merged_class = tw_merge!("relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2", class);
+    let merged_class = tw_merge!(
+        "relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2",
+        class
+    );
 
     view! {
         <div attr:data-name="FormSeparator" attr:data-content=has_content.to_string() class=merged_class>
@@ -265,9 +270,9 @@ pub fn FormError(
     ().into_any()
 }
 
-/* ========================================================== */
-/*                  ✨ FORM COMPONENTS ✨                     */
-/* ========================================================== */
+// ==========================================================
+// ✨ FORM COMPONENTS ✨
+// ==========================================================
 
 #[component]
 pub fn FormField(#[prop(into)] field: String, children: Children) -> impl IntoView {

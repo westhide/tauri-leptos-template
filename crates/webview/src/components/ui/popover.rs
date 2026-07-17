@@ -12,9 +12,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum PopoverAlign {
@@ -43,8 +43,9 @@ pub fn Popover(
     let popover_target_id = format!("popover_{}", popover_id);
 
     let (position_styles, transform_origin) = match align {
-        PopoverAlign::Start => (
-            "left: anchor(left);
+        PopoverAlign::Start => {
+            (
+                "left: anchor(left);
                 bottom: anchor(top);
                 margin-bottom: 8px;
                 @position-try(flip-block) {
@@ -53,22 +54,26 @@ pub fn Popover(
                 margin-top: 8px;
                 margin-bottom: 0;
                 }"
-            .to_string(),
-            "left top".to_string(),
-        ),
-        PopoverAlign::StartOuter => (
-            "right: anchor(left);
+                .to_string(),
+                "left top".to_string(),
+            )
+        },
+        PopoverAlign::StartOuter => {
+            (
+                "right: anchor(left);
                 top: anchor(top);
                 margin-right: 8px;
                 @position-try(flip-block) {
                 top: anchor(bottom);
                 margin-top: 8px;
                 }"
-            .to_string(),
-            "right top".to_string(),
-        ),
-        PopoverAlign::End => (
-            "right: anchor(right);
+                .to_string(),
+                "right top".to_string(),
+            )
+        },
+        PopoverAlign::End => {
+            (
+                "right: anchor(right);
                 bottom: anchor(top);
                 margin-bottom: 8px;
                 @position-try(flip-block) {
@@ -77,24 +82,32 @@ pub fn Popover(
                 margin-top: 8px;
                 margin-bottom: 0;
                 }"
-            .to_string(),
-            "right top".to_string(),
-        ),
-        PopoverAlign::EndOuter => (
-            "left: anchor(right);
+                .to_string(),
+                "right top".to_string(),
+            )
+        },
+        PopoverAlign::EndOuter => {
+            (
+                "left: anchor(right);
                 top: anchor(top);
                 margin-left: 8px;
                 @position-try(flip-block) {
                 top: anchor(bottom);
                 margin-top: 8px;
                 }"
-            .to_string(),
-            "left top".to_string(),
-        ),
-        PopoverAlign::Center => ("position-area: block-start;".to_string(), "center top".to_string()),
+                .to_string(),
+                "left top".to_string(),
+            )
+        },
+        PopoverAlign::Center => {
+            ("position-area: block-start;".to_string(), "center top".to_string())
+        },
     };
 
-    let ctx = PopoverContext { anchor_name: popover_anchor_name.clone(), target_id: popover_target_id.clone() };
+    let ctx = PopoverContext {
+        anchor_name: popover_anchor_name.clone(),
+        target_id: popover_target_id.clone(),
+    };
 
     view! {
         <leptos::context::Provider value=ctx>

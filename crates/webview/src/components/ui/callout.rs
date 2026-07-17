@@ -1,9 +1,9 @@
 use leptos::prelude::*;
 use tw_merge::tw_merge;
 
-/* ========================================================== */
-/*                       Enums                                */
-/* ========================================================== */
+// ==========================================================
+// Enums
+// ==========================================================
 
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum CalloutVariant {
@@ -13,9 +13,9 @@ pub enum CalloutVariant {
     Warning,
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn Callout(
@@ -26,10 +26,12 @@ pub fn Callout(
 ) -> impl IntoView {
     let variant_class = match variant {
         CalloutVariant::Default => "border-border bg-surface text-surface-foreground",
-        CalloutVariant::Info => "border-info bg-info-light text-foreground dark:bg-info-dark/20 dark:border-info/50",
+        CalloutVariant::Info => {
+            "border-info bg-info-light text-foreground dark:bg-info-dark/20 dark:border-info/50"
+        },
         CalloutVariant::Warning => {
             "border-warning bg-warning-light text-foreground dark:bg-warning-dark/20 dark:border-warning/50"
-        }
+        },
     };
 
     let merged_class = tw_merge!(

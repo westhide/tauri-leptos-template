@@ -2,9 +2,9 @@ use leptos::prelude::*;
 use leptos_ui::clx;
 use tw_merge::*;
 
-/* ========================================================== */
-/*                       Enums                                */
-/* ========================================================== */
+// ==========================================================
+// Enums
+// ==========================================================
 
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum ToggleGroupVariant {
@@ -20,9 +20,9 @@ pub enum ToggleGroupOrientation {
     Vertical,
 }
 
-/* ========================================================== */
-/*                       Context                              */
-/* ========================================================== */
+// ==========================================================
+// Context
+// ==========================================================
 
 #[derive(Clone, Copy, Default)]
 struct ToggleGroupCtx {
@@ -31,9 +31,9 @@ struct ToggleGroupCtx {
     spacing: i32,
 }
 
-/* ========================================================== */
-/*                     Components (clx!)                      */
-/* ========================================================== */
+// ==========================================================
+// Components (clx!)
+// ==========================================================
 
 mod components {
     use super::*;
@@ -42,9 +42,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn ToggleGroup(
@@ -58,7 +58,11 @@ pub fn ToggleGroup(
 
     let is_vertical = orientation == ToggleGroupOrientation::Vertical;
 
-    let gap_style = if spacing == 0 { "gap: 0px".to_string() } else { format!("gap: {}rem", spacing as f64 * 0.25) };
+    let gap_style = if spacing == 0 {
+        "gap: 0px".to_string()
+    } else {
+        format!("gap: {}rem", spacing as f64 * 0.25)
+    };
 
     let class = tw_merge!(
         "flex items-center rounded-md group/toggle-group w-fit",
@@ -100,7 +104,11 @@ pub fn ToggleGroupItem(
     };
 
     let border = if is_outline && is_grouped {
-        if is_vertical { "border border-t-0 first:border-t" } else { "border border-l-0 first:border-l" }
+        if is_vertical {
+            "border border-t-0 first:border-t"
+        } else {
+            "border border-l-0 first:border-l"
+        }
     } else if is_outline {
         "border"
     } else {

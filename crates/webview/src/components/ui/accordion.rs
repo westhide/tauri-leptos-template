@@ -17,12 +17,15 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
-pub fn AccordionContent(#[prop(into, optional)] class: String, children: Children) -> impl IntoView {
+pub fn AccordionContent(
+    #[prop(into, optional)] class: String,
+    children: Children,
+) -> impl IntoView {
     let merged_class = tw_merge!("p-3 pt-0", class);
 
     view! {
@@ -35,9 +38,9 @@ pub fn AccordionContent(#[prop(into, optional)] class: String, children: Childre
     }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[derive(Default)]
 pub enum AccordionTriggerIcon {

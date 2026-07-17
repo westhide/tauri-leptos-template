@@ -17,9 +17,9 @@ pub fn MaskWrapper(#[prop(into, optional)] class: String, children: Children) ->
     view! { <div class=merged_class>{children()}</div> }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[derive(TwClass, Clone, Copy)]
 #[tw(class = "absolute inset-y-0 pointer-events-none from-white dark:from-background")]

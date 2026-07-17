@@ -2,9 +2,9 @@ use leptos::prelude::*;
 use leptos_ui::clx;
 use tw_merge::tw_merge;
 
-/* ========================================================== */
-/*                       Enums                                */
-/* ========================================================== */
+// ==========================================================
+// Enums
+// ==========================================================
 
 #[derive(Clone, Copy, PartialEq, Eq, Default, strum::Display)]
 pub enum MessageAlign {
@@ -13,9 +13,9 @@ pub enum MessageAlign {
     End,
 }
 
-/* ========================================================== */
-/*                     Components (clx!)                      */
-/* ========================================================== */
+// ==========================================================
+// Components (clx!)
+// ==========================================================
 
 mod components {
     use super::*;
@@ -47,9 +47,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[component]
 pub fn MessageAvatar(
@@ -78,8 +78,10 @@ pub fn Message(
     #[prop(optional, into)] class: String,
     children: Children,
 ) -> impl IntoView {
-    let merged_class =
-        tw_merge!("group/message relative flex w-full min-w-0 gap-2 text-sm data-[align=End]:flex-row-reverse", class);
+    let merged_class = tw_merge!(
+        "group/message relative flex w-full min-w-0 gap-2 text-sm data-[align=End]:flex-row-reverse",
+        class
+    );
     let align_str = align.to_string();
     view! {
         <div class=merged_class data-name="Message" data-align=align_str>

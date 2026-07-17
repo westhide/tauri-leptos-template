@@ -1,6 +1,8 @@
-use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::{
+    collections::hash_map::DefaultHasher,
+    hash::{Hash, Hasher},
+    sync::atomic::{AtomicUsize, Ordering},
+};
 
 const PREFIX: &str = "rust_ui"; // Must NOT contain "/" or "-"
 
@@ -17,9 +19,9 @@ pub fn use_random_transition_name() -> String {
     format!("view-transition-name: {random_id}")
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 static COUNTER: AtomicUsize = AtomicUsize::new(1);
 

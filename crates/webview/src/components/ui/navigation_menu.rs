@@ -1,21 +1,20 @@
 use icons::ChevronDown;
-use leptos::context::Provider;
-use leptos::prelude::*;
+use leptos::{context::Provider, prelude::*};
 use tw_merge::*;
 
 use crate::components::hooks::use_random::use_random_id_for;
 
-/* ========================================================== */
-/*                    TRIGGER STYLE HELPER                     */
-/* ========================================================== */
+// ==========================================================
+// TRIGGER STYLE HELPER
+// ==========================================================
 
 pub fn navigation_menu_trigger_style() -> &'static str {
     "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-accent/50"
 }
 
-/* ========================================================== */
-/*                         CONTEXTS                            */
-/* ========================================================== */
+// ==========================================================
+// CONTEXTS
+// ==========================================================
 
 #[derive(Clone)]
 struct NavigationMenuContext {
@@ -27,9 +26,9 @@ struct NavigationMenuItemContext {
     item_id: String,
 }
 
-/* ========================================================== */
-/*                       NAVIGATION MENU                       */
-/* ========================================================== */
+// ==========================================================
+// NAVIGATION MENU
+// ==========================================================
 
 /// Root navigation wrapper. All content panels are absolutely positioned
 /// relative to this element, creating a shared viewport effect without portaling.
@@ -175,12 +174,15 @@ pub fn NavigationMenu(children: Children, #[prop(optional, into)] class: String)
     }
 }
 
-/* ========================================================== */
-/*                    NAVIGATION MENU LIST                     */
-/* ========================================================== */
+// ==========================================================
+// NAVIGATION MENU LIST
+// ==========================================================
 
 #[component]
-pub fn NavigationMenuList(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
+pub fn NavigationMenuList(
+    children: Children,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView {
     let class = tw_merge!("group flex flex-1 list-none items-center justify-center gap-1", class);
 
     view! {
@@ -190,9 +192,9 @@ pub fn NavigationMenuList(children: Children, #[prop(optional, into)] class: Str
     }
 }
 
-/* ========================================================== */
-/*                    NAVIGATION MENU ITEM                     */
-/* ========================================================== */
+// ==========================================================
+// NAVIGATION MENU ITEM
+// ==========================================================
 
 /// NOTE: intentionally has NO `position: relative` so that NavigationMenuContent
 /// (with `position: absolute`) escapes to the <nav> root, making all panels
@@ -209,12 +211,15 @@ pub fn NavigationMenuItem(children: Children) -> impl IntoView {
     }
 }
 
-/* ========================================================== */
-/*                   NAVIGATION MENU TRIGGER                   */
-/* ========================================================== */
+// ==========================================================
+// NAVIGATION MENU TRIGGER
+// ==========================================================
 
 #[component]
-pub fn NavigationMenuTrigger(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
+pub fn NavigationMenuTrigger(
+    children: Children,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView {
     let item_ctx = expect_context::<NavigationMenuItemContext>();
     let menu_ctx = expect_context::<NavigationMenuContext>();
 
@@ -238,14 +243,17 @@ pub fn NavigationMenuTrigger(children: Children, #[prop(optional, into)] class: 
     }
 }
 
-/* ========================================================== */
-/*                  NAVIGATION MENU CONTENT                    */
-/* ========================================================== */
+// ==========================================================
+// NAVIGATION MENU CONTENT
+// ==========================================================
 
 /// Absolutely positioned relative to NavigationMenu (not NavigationMenuItem),
 /// so all content panels share the same anchor point below the menu bar.
 #[component]
-pub fn NavigationMenuContent(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
+pub fn NavigationMenuContent(
+    children: Children,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView {
     let ctx = expect_context::<NavigationMenuItemContext>();
 
     let class = tw_merge!(
@@ -260,9 +268,9 @@ pub fn NavigationMenuContent(children: Children, #[prop(optional, into)] class: 
     }
 }
 
-/* ========================================================== */
-/*                    NAVIGATION MENU LINK                     */
-/* ========================================================== */
+// ==========================================================
+// NAVIGATION MENU LINK
+// ==========================================================
 
 #[component]
 pub fn NavigationMenuLink(

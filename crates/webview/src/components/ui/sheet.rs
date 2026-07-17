@@ -1,12 +1,13 @@
 use icons::X;
-use leptos::context::Provider;
-use leptos::prelude::*;
+use leptos::{context::Provider, prelude::*};
 use leptos_ui::clx;
 use tw_merge::*;
 
 use super::button::ButtonSize;
-use crate::components::hooks::use_random::use_random_id_for;
-use crate::components::ui::button::{Button, ButtonVariant};
+use crate::components::{
+    hooks::use_random::use_random_id_for,
+    ui::button::{Button, ButtonVariant},
+};
 
 mod components {
     use super::*;
@@ -19,18 +20,18 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     ✨ CONTEXT ✨                          */
-/* ========================================================== */
+// ==========================================================
+// ✨ CONTEXT ✨
+// ==========================================================
 
 #[derive(Clone)]
 pub struct SheetContext {
     pub target_id: String,
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 pub type SheetVariant = ButtonVariant;
 pub type SheetSize = ButtonSize;
@@ -224,9 +225,9 @@ pub fn SheetContent(
     }
 }
 
-/* ========================================================== */
-/*                     ✨ ENUM ✨                             */
-/* ========================================================== */
+// ==========================================================
+// ✨ ENUM ✨
+// ==========================================================
 
 #[derive(Clone, Copy, strum::AsRefStr, strum::Display)]
 pub enum SheetDirection {

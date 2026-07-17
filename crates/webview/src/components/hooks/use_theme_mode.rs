@@ -1,5 +1,4 @@
-use leptos::prelude::*;
-use leptos::web_sys::Storage;
+use leptos::{prelude::*, web_sys::Storage};
 
 #[derive(Debug, Clone, Copy)]
 pub struct ThemeMode {
@@ -15,9 +14,9 @@ pub fn use_theme_mode() -> ThemeMode {
     expect_context::<ThemeMode>()
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 impl ThemeMode {
     #[must_use]
@@ -72,9 +71,9 @@ impl ThemeMode {
         !self.state.get()
     }
 
-    /* ========================================================== */
-    /*                     ✨ FUNCTIONS ✨                        */
-    /* ========================================================== */
+    // ==========================================================
+    // ✨ FUNCTIONS ✨
+    // ==========================================================
 
     /// Retrieves the local storage object, if available.
     fn get_storage() -> Option<Storage> {

@@ -1,6 +1,5 @@
 use icons::{Check, ChevronRight};
-use leptos::context::Provider;
-use leptos::prelude::*;
+use leptos::{context::Provider, prelude::*};
 use leptos_ui::clx;
 use tw_merge::*;
 
@@ -18,9 +17,9 @@ mod components {
 
 pub use components::*;
 
-/* ========================================================== */
-/*                     RADIO GROUP                            */
-/* ========================================================== */
+// ==========================================================
+// RADIO GROUP
+// ==========================================================
 
 #[derive(Clone)]
 struct DropdownMenuRadioContext<T: Clone + PartialEq + Send + Sync + 'static> {
@@ -105,8 +104,12 @@ pub fn DropdownMenuAction(
     let _ctx = expect_context::<DropdownMenuContext>();
 
     let variant_class = match variant {
-        DropdownMenuActionVariant::Default => "text-popover-foreground hover:bg-accent hover:text-accent-foreground",
-        DropdownMenuActionVariant::Destructive => "text-destructive hover:bg-destructive/10 hover:text-destructive",
+        DropdownMenuActionVariant::Default => {
+            "text-popover-foreground hover:bg-accent hover:text-accent-foreground"
+        },
+        DropdownMenuActionVariant::Destructive => {
+            "text-destructive hover:bg-destructive/10 hover:text-destructive"
+        },
     };
 
     let class = tw_merge!(
@@ -172,9 +175,9 @@ pub fn DropdownMenuAction(
     }
 }
 
-/* ========================================================== */
-/*                     ✨ FUNCTIONS ✨                        */
-/* ========================================================== */
+// ==========================================================
+// ✨ FUNCTIONS ✨
+// ==========================================================
 
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum DropdownMenuAlign {
@@ -543,7 +546,10 @@ pub fn DropdownMenuSub(children: Children) -> impl IntoView {
 }
 
 #[component]
-pub fn DropdownMenuSubTrigger(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
+pub fn DropdownMenuSubTrigger(
+    children: Children,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView {
     let class = tw_merge!("flex items-center justify-between w-full", class);
 
     view! {
@@ -555,7 +561,10 @@ pub fn DropdownMenuSubTrigger(children: Children, #[prop(optional, into)] class:
 }
 
 #[component]
-pub fn DropdownMenuSubItem(children: Children, #[prop(optional, into)] class: String) -> impl IntoView {
+pub fn DropdownMenuSubItem(
+    children: Children,
+    #[prop(optional, into)] class: String,
+) -> impl IntoView {
     let class = tw_merge!(
         "inline-flex gap-2 items-center w-full rounded-sm px-3 py-2 text-sm transition-all duration-150 ease text-popover-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer hover:translate-x-[2px]",
         class
