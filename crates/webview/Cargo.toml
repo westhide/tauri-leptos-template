@@ -65,6 +65,7 @@ assets-dir          = "./public"
 bin-exe-name        = "server"
 bin-features        = ["ssr"]
 bin-target          = "server"
+hash-files          = true
 lib-features        = ["hydrate"]
 reload-port         = 1421
 site-addr           = "127.0.0.1:1420"

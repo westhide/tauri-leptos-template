@@ -17,7 +17,7 @@ width  = 800
 
 [build]
 # Leptos
-before-build-command = "cargo leptos --manifest-path ../Cargo.toml build --release"
+before-build-command = "cargo leptos --manifest-path ../Cargo.toml build --release --precompress"
 before-dev-command   = "cargo leptos --manifest-path ../Cargo.toml serve"
 
 # Trunk
