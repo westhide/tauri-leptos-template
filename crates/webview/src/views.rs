@@ -3,7 +3,7 @@ pub mod home;
 pub mod pingpong;
 pub mod version;
 
-use leptos::{prelude::*, task::spawn_local};
+use leptos::prelude::*;
 use leptos_meta::provide_meta_context;
 use leptos_router::{
     SsrMode,
@@ -17,13 +17,14 @@ use crate::bootstrap::hydrate::hydrate_hook;
 use crate::views::{fallback::Fallback, home::Home, pingpong::PingPong, version::Version};
 
 #[component]
+pub fn HydrationHook() -> impl IntoView {
+    #[cfg(client)]
+    Suspend::new(hydrate_hook())
+}
+
+#[component]
 pub fn Main() -> impl IntoView {
     provide_meta_context();
-
-    #[cfg(client)]
-    spawn_local(async {
-        hydrate_hook().await.unwrap();
-    });
 
     view! {
         <Router>
@@ -45,5 +46,6 @@ pub fn Main() -> impl IntoView {
                 </Routes>
             </main>
         </Router>
+        <HydrationHook />
     }
 }

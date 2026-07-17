@@ -48,7 +48,7 @@ pub enum Error {
 }
 
 /// ServerFnError
-#[derive(Debug, Serialize, Deserialize, thiserror::Error)]
+#[derive(Debug, Clone, Serialize, Deserialize, thiserror::Error)]
 pub enum ServerFnError {
     #[error(transparent)]
     ServerFnError(#[from] ServerFnErrorErr),
