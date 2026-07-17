@@ -40,7 +40,7 @@ tonic-web            = { default-features = false, version = "0.14" }
 wasm-bindgen         = { default-features = false, version = "0.2" }
 wasm-bindgen-futures = { default-features = false, version = "0.4" }
 wasm-streams         = { default-features = false, version = "0.5" }
-web-sys              = { default-features = false, version = "0.3", features = ["DomRect", "MediaQueryList", "NodeList", "Storage"] }
+web-sys              = { default-features = false, version = "0.3", features = ["Clipboard", "DomRect", "MediaQueryList", "Navigator", "NodeList", "Storage"] }
 
 
 [build-dependencies]

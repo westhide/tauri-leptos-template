@@ -4,6 +4,7 @@ cargo install ui-cli --locked
 
 ui init
 
+# Components
 ui add accordion
 ui add alert
 ui add alert_dialog
@@ -66,3 +67,13 @@ ui add textarea
 ui add theme_toggle
 # ui add toast
 ui add toggle_group
+
+
+# Hooks
+ui add use_copy_clipboard
+ui add use_history
+ui add use_horizontal_scroll
+ui add use_is_mobile
+ui add use_media_query
+ui add use_press_hold
+ui add use_random

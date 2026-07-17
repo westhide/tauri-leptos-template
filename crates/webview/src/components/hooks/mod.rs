@@ -7,3 +7,8 @@ pub mod use_press_hold;
 pub mod use_random;
 pub mod use_theme_mode;
 pub mod use_virtual_scroll;
+pub mod use_copy_clipboard;
+pub mod use_history;
+pub mod use_horizontal_scroll;
+pub mod use_is_mobile;
+pub mod use_media_query;
