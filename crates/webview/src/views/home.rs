@@ -20,17 +20,17 @@ pub fn Home() -> impl IntoView {
         <>
             <h1>"Welcome to Tauri + Leptos"</h1>
 
-            <div class="row">
+            <div>
                 <a href="https://tauri.app" target="_blank">
-                    <img src="/assets/tauri.svg" class="logo tauri" alt="Tauri logo" />
+                    <img src="/assets/tauri.svg" />
                 </a>
                 <a href="https://docs.rs/leptos/" target="_blank">
-                    <img src="/assets/leptos.svg" class="logo leptos" alt="Leptos logo" />
+                    <img src="/assets/leptos.svg" />
                 </a>
             </div>
             <p>"Click on the Tauri and Leptos logos to learn more."</p>
 
-            <form class="row" on:submit=submit>
+            <form on:submit=submit>
                 <input id="greet-input" placeholder="Enter a name..." on:input=update_name />
                 <button type="submit">"Greet"</button>
             </form>

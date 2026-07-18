@@ -3,6 +3,10 @@ use leptos_router::hooks::use_navigate;
 
 use crate::shared::logger::error;
 
+pub fn error_fallback(errors: ArcRwSignal<Errors>) -> impl IntoView {
+    view! { <Failure errors /> }
+}
+
 #[component]
 pub fn Failure(errors: ArcRwSignal<Errors>) -> impl IntoView {
     error!(errors= ?*errors.read());
