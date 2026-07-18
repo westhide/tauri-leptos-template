@@ -1,8 +1,8 @@
 use leptos::{html, prelude::*};
-use strum::AsRefStr;
+use strum::{AsRefStr, IntoStaticStr};
 use tw_merge::tw_merge;
 
-#[derive(Default, Clone, Copy, PartialEq, Eq, AsRefStr)]
+#[derive(Default, Clone, Copy, PartialEq, Eq, AsRefStr, IntoStaticStr)]
 #[strum(serialize_all = "lowercase")]
 pub enum InputType {
     #[default]
@@ -30,7 +30,7 @@ pub fn Input(
     #[prop(into, optional)] class: String,
 
     // Common HTML attributes
-    #[prop(default = InputType::default())] r#type: InputType,
+    #[prop(default = Default::default())] r#type: RwSignal<InputType>,
     #[prop(into, optional)] placeholder: Option<String>,
     #[prop(into, optional)] name: Option<String>,
     #[prop(into, optional)] id: Option<String>,
@@ -62,14 +62,14 @@ pub fn Input(
         class
     );
 
-    let type_str = r#type.as_ref();
+    type InputTy = &'static str;
 
     match bind_value {
         Some(signal) => {
             view! {
                 <input
                     data-name="Input"
-                    type=type_str
+                    type=move || InputTy::from(r#type.get())
                     class=merged_class
                     placeholder=placeholder
                     name=name
@@ -94,7 +94,7 @@ pub fn Input(
             view! {
                 <input
                     data-name="Input"
-                    type=type_str
+                    type=move || InputTy::from(r#type.get())
                     class=merged_class
                     placeholder=placeholder
                     name=name
