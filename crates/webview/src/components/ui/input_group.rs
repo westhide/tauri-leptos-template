@@ -108,7 +108,7 @@ variants! {
 #[component]
 pub fn InputGroupInput(
     #[prop(into, optional)] class: String,
-    #[prop(default = Default::default())] r#type: RwSignal<InputType>,
+    #[prop(into, default = Default::default())] r#type: Signal<InputType>,
     #[prop(into, optional)] placeholder: String,
     #[prop(into, optional)] name: String,
     #[prop(into, optional)] id: String,

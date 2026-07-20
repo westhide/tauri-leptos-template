@@ -30,7 +30,7 @@ pub fn Input(
     #[prop(into, optional)] class: String,
 
     // Common HTML attributes
-    #[prop(default = Default::default())] r#type: RwSignal<InputType>,
+    #[prop(into, default = Default::default())] r#type: Signal<InputType>,
     #[prop(into, optional)] placeholder: Option<String>,
     #[prop(into, optional)] name: Option<String>,
     #[prop(into, optional)] id: Option<String>,
