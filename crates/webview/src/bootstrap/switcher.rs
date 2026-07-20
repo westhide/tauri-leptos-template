@@ -3,7 +3,7 @@ use leptos::prelude::*;
 
 use crate::components::ui::{
     dropdown_menu::{DropdownMenu, DropdownMenuAction, DropdownMenuContent, DropdownMenuTrigger},
-    sidebar::{SidebarMenu, SidebarMenuButton, SidebarMenuButtonSize, SidebarMenuItem},
+    sidebar::{SidebarMenu, SidebarMenuButton, SidebarMenuItem},
 };
 
 // ==========================================================
@@ -29,26 +29,28 @@ pub fn Switcher(items: Vec<SwitcherItem>) -> impl IntoView {
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger as_child=true>
-                        <SidebarMenuButton size=SidebarMenuButtonSize::Lg class="group">
+                        <SidebarMenuButton>
                             <House class="size-4 shrink-0" />
                             <div class="grid place-items-center h-full text-sm text-left">
-                                <span class="w-full truncate font-semibold">
-                                    {display_name}
-                                </span>
+                                <span class="w-full font-semibold truncate">{display_name}</span>
                             </div>
-                            <ChevronRight class="size-4 shrink-0 ml-auto transition-transform duration-200 ease-out group-data-[open=true]:rotate-90" />
+                            <ChevronRight class="ml-auto transition-transform duration-200 ease-out size-4 shrink-0 group-data-[open=true]:rotate-90" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <div class="p-2 text-xs opacity-70">"租户"</div>
-                        {items.into_iter().enumerate().map(|(idx, item)| {
-                            view! {
-                                <DropdownMenuAction on:click=move |_| index.set(idx)>
-                                    <span>{idx + 1}</span>
-                                    <span>{item.name}</span>
-                                </DropdownMenuAction>
-                            }
-                        }).collect::<Vec<_>>()}
+                        {items
+                            .into_iter()
+                            .enumerate()
+                            .map(|(idx, item)| {
+                                view! {
+                                    <DropdownMenuAction on:click=move |_| index.set(idx)>
+                                        <span>{idx + 1}</span>
+                                        <span>{item.name}</span>
+                                    </DropdownMenuAction>
+                                }
+                            })
+                            .collect::<Vec<_>>()}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

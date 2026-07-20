@@ -2,20 +2,16 @@ use icons::PanelLeft;
 use leptos::prelude::*;
 use tw_merge::tw_merge;
 
-use crate::components::{
-    hooks::use_is_mobile::use_is_mobile,
-    ui::{
-        button::{Button, ButtonVariant},
-        skeleton::Skeleton,
-    },
+use crate::components::ui::{
+    button::{Button, ButtonVariant},
+    skeleton::Skeleton,
 };
 
 // ==========================================================
 // Constants
 // ==========================================================
 
-const SIDEBAR_WIDTH: &str = "16rem";
-const SIDEBAR_WIDTH_MOBILE: &str = "18rem";
+const SIDEBAR_WIDTH: &str = "12rem";
 const SIDEBAR_WIDTH_ICON: &str = "3rem";
 
 // ==========================================================
@@ -24,8 +20,7 @@ const SIDEBAR_WIDTH_ICON: &str = "3rem";
 
 fn sidebar_css_vars() -> String {
     format!(
-r#"--sidebar-width: {SIDEBAR_WIDTH};
---sidebar-width-mobile: {SIDEBAR_WIDTH_MOBILE};
+        r#"--sidebar-width: {SIDEBAR_WIDTH};
 --sidebar-width-icon: {SIDEBAR_WIDTH_ICON};
 --sidebar-background: var(--primary-color-2, hsl(240 5.9% 96%));
 --sidebar-foreground: var(--secondary-color-4, hsl(240 10% 10%));
@@ -92,10 +87,9 @@ impl SidebarVariant {
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum SidebarCollapsible {
-    #[default]
     Offcanvas,
+    #[default]
     Icon,
-    None,
 }
 
 impl SidebarCollapsible {
@@ -103,7 +97,6 @@ impl SidebarCollapsible {
         match self {
             SidebarCollapsible::Offcanvas => "offcanvas",
             SidebarCollapsible::Icon => "icon",
-            SidebarCollapsible::None => "none",
         }
     }
 }
@@ -116,22 +109,12 @@ impl SidebarCollapsible {
 pub struct SidebarCtx {
     pub state: Signal<SidebarState>,
     pub side: RwSignal<SidebarSide>,
-    pub is_mobile: Signal<bool>,
     open: RwSignal<bool>,
-    pub open_mobile: RwSignal<bool>,
 }
 
 impl SidebarCtx {
     pub fn toggle(&self) {
-        if self.is_mobile.get_untracked() {
-            self.open_mobile.update(|value| *value ^= true);
-        } else {
-            self.open.update(|value| *value ^= true);
-        }
-    }
-
-    pub fn set_open_mobile(&self, value: bool) {
-        self.open_mobile.set(value);
+        self.open.update(|value| *value ^= true);
     }
 
     pub fn open(&self) -> bool {
@@ -152,9 +135,7 @@ pub fn SidebarProvider(
     #[prop(default = true)] default_open: bool,
     children: Children,
 ) -> impl IntoView {
-    let is_mobile = use_is_mobile();
     let side = RwSignal::new(SidebarSide::Left);
-    let open_mobile = RwSignal::new(false);
     let open = RwSignal::new(default_open);
 
     let state =
@@ -164,9 +145,8 @@ pub fn SidebarProvider(
             },
         );
 
-    let ctx = SidebarCtx { state, side, is_mobile, open, open_mobile };
-
-    provide_context(ctx.clone());
+    let ctx = SidebarCtx { state, side, open };
+    provide_context(ctx);
 
     view! {
         <div
@@ -185,9 +165,9 @@ pub fn SidebarProvider(
 
 #[component]
 pub fn Sidebar(
-    #[prop(default = SidebarSide::Left)] side: SidebarSide,
-    #[prop(default = SidebarVariant::Sidebar)] variant: SidebarVariant,
-    #[prop(default = SidebarCollapsible::Offcanvas)] collapsible: SidebarCollapsible,
+    #[prop(optional)] side: SidebarSide,
+    #[prop(optional)] variant: SidebarVariant,
+    #[prop(optional)] collapsible: SidebarCollapsible,
     #[prop(optional, into)] class: String,
     children: Children,
 ) -> impl IntoView {
@@ -198,22 +178,6 @@ pub fn Sidebar(
     }
 
     let state = ctx.state;
-    let is_mobile = ctx.is_mobile;
-    let open_mobile = ctx.open_mobile;
-
-    // When collapsible is None, render static sidebar
-    if collapsible == SidebarCollapsible::None {
-        let merged = tw_merge!(
-            "grid h-full text-[var(--sidebar-foreground)] bg-[var(--sidebar-background)]",
-            class
-        );
-        return view! {
-            <div data-slot="sidebar" data-sidebar-static="" style=format!("width: var(--sidebar-width)") class=merged>
-                {children()}
-            </div>
-        }
-        .into_any();
-    }
 
     let collapsible_str = move || {
         if state.get() == SidebarState::Collapsed { collapsible.as_str() } else { "" }
@@ -223,45 +187,6 @@ pub fn Sidebar(
     let variant_str = variant.as_str();
 
     view! {
-        // Mobile overlay
-        {move || {
-            if !is_mobile.get() {
-                return ().into_any();
-            }
-            let mobile_open = open_mobile.get();
-            let state_attr = if mobile_open { "open" } else { "closed" };
-            view! {
-                <div data-sidebar-mobile="" class="fixed inset-0 z-50">
-                    <div
-                        data-sidebar-mobile-backdrop=""
-                        data-state=state_attr
-                        class="absolute inset-0 transition-opacity duration-200 ease-out bg-black/50 data-[state=closed]:opacity-0 data-[state=closed]:pointer-events-none"
-                        on:click=move |_| ctx.open_mobile.set(false)
-                    />
-                    <div
-                        data-sidebar-mobile-panel=""
-                        data-state=state_attr
-                        class=format!(
-                            "absolute top-0 bottom-0 w-[var(--sidebar-width-mobile)] bg-[var(--sidebar-background)] transition-transform duration-200 ease-out grid {} {}",
-                            if side == SidebarSide::Left { "left-0" } else { "right-0" },
-                            "data-[state=closed]:pointer-events-none",
-                        )
-                    >
-                        <button
-                            data-sidebar-mobile-close=""
-                            class="grid absolute top-2 right-2 place-items-center p-0 bg-transparent rounded-md border-none cursor-pointer size-7 text-[var(--sidebar-foreground)]"
-                            on:click=move |_| ctx.open_mobile.set(false)
-                            aria-label="Close sidebar"
-                        >
-                            <icons::X class="size-4" />
-                        </button>
-                    </div>
-                </div>
-            }
-                .into_any()
-        }}
-
-        // Desktop sidebar
         <div
             data-sidebar-desktop=""
             data-state=move || state.get().as_str()
@@ -269,7 +194,7 @@ pub fn Sidebar(
             data-variant=variant_str
             data-side=side_str
             data-slot="sidebar"
-            class="hidden md:block text-[var(--sidebar-foreground)] group/sidebar-desktop peer"
+            class="text-[var(--sidebar-foreground)] group/sidebar-desktop peer"
         >
             // Sidebar gap (spacer)
             <div
@@ -302,13 +227,13 @@ pub fn Sidebar(
                 <div
                     data-sidebar-inner=""
                     data-slot="sidebar-inner"
-                    class="grid w-full h-full box-border bg-[var(--sidebar-background)] group-data-[collapsible=icon]/sidebar-desktop:overflow-visible group-data-[variant=floating]/sidebar-desktop:border group-data-[variant=floating]/sidebar-desktop:border-[var(--sidebar-border)] group-data-[variant=floating]/sidebar-desktop:rounded-lg group-data-[variant=floating]/sidebar-desktop:shadow-sm"
+                    class="grid w-full h-full box-border bg-[var(--sidebar-background)] grid-rows-[auto_1fr_auto] group-data-[collapsible=icon]/sidebar-desktop:overflow-visible group-data-[variant=floating]/sidebar-desktop:border group-data-[variant=floating]/sidebar-desktop:border-[var(--sidebar-border)] group-data-[variant=floating]/sidebar-desktop:rounded-lg group-data-[variant=floating]/sidebar-desktop:shadow-sm"
                 >
                     {children()}
                 </div>
             </div>
         </div>
-    }.into_any()
+    }
 }
 
 // ==========================================================
@@ -322,7 +247,13 @@ pub fn SidebarTrigger(#[prop(optional, into)] class: String) -> impl IntoView {
     let merged = tw_merge!("inline-grid size-7 place-items-center p-0!", class);
 
     view! {
-        <Button variant=ButtonVariant::Ghost class=merged on:click=move |_| ctx.toggle() attr:data-sidebar="trigger" attr:data-slot="sidebar-trigger">
+        <Button
+            variant=ButtonVariant::Ghost
+            class=merged
+            on:click=move |_| ctx.toggle()
+            attr:data-sidebar="trigger"
+            attr:data-slot="sidebar-trigger"
+        >
             <PanelLeft class="size-4" />
             <span class="sr-only">"Toggle Sidebar"</span>
         </Button>
@@ -357,7 +288,7 @@ pub fn SidebarRail() -> impl IntoView {
 #[component]
 pub fn SidebarInset(#[prop(optional, into)] class: String, children: Children) -> impl IntoView {
     let merged = tw_merge!(
-r#"relative grid w-full bg-[var(--primary-color-1,#fff)]
+        r#"relative grid w-full bg-[var(--primary-color-1,#fff)]
 peer-data-[variant=inset]/sidebar-desktop:rounded-xl peer-data-[variant=inset]/sidebar-desktop:m-2 peer-data-[variant=inset]/sidebar-desktop:ml-0
 peer-data-[variant=inset]/sidebar-desktop:shadow-sm
 peer-data-[variant=inset]/sidebar-desktop:peer-data-[state=collapsed]/sidebar-desktop:ml-2
@@ -389,7 +320,7 @@ pub fn SidebarHeader(#[prop(optional, into)] class: String, children: Children) 
 #[component]
 pub fn SidebarContent(#[prop(optional, into)] class: String, children: Children) -> impl IntoView {
     let merged = tw_merge!(
-        "grid overflow-hidden overflow-y-auto min-h-0 flex-1 gap-2 group-data-[collapsible=icon]/sidebar-desktop:overflow-visible",
+        "grid overflow-x-hidden overflow-y-auto min-h-0 gap-2 group-data-[collapsible=icon]/sidebar-desktop:overflow-visible",
         class
     );
     view! {
@@ -415,7 +346,7 @@ pub fn SidebarFooter(#[prop(optional, into)] class: String, children: Children) 
 
 #[component]
 pub fn SidebarGroup(#[prop(optional, into)] class: String, children: Children) -> impl IntoView {
-    let merged = tw_merge!("relative grid min-w-0 p-2", class);
+    let merged = tw_merge!("relative min-w-0 p-2", class);
     view! {
         <div data-sidebar="group" data-slot="sidebar-group" class=merged>
             {children()}
@@ -497,32 +428,6 @@ pub fn SidebarMenuItem(#[prop(optional, into)] class: String, children: Children
 // ==========================================================
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
-pub enum SidebarMenuButtonSize {
-    #[default]
-    Default,
-    Sm,
-    Lg,
-}
-
-impl SidebarMenuButtonSize {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            SidebarMenuButtonSize::Default => "default",
-            SidebarMenuButtonSize::Sm => "sm",
-            SidebarMenuButtonSize::Lg => "lg",
-        }
-    }
-
-    fn tw_class(&self) -> &'static str {
-        match self {
-            SidebarMenuButtonSize::Default => "h-8 text-sm",
-            SidebarMenuButtonSize::Sm => "h-7 text-xs",
-            SidebarMenuButtonSize::Lg => "h-12 text-sm",
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum SidebarMenuButtonVariant {
     #[default]
     Default,
@@ -548,7 +453,7 @@ impl SidebarMenuButtonVariant {
 }
 
 // Base menu button styles (shared, static)
-const MENU_BUTTON_BASE: &str = r#"grid grid-cols-[auto_1fr_auto] overflow-hidden w-full box-border items-center p-2 border-none rounded-md
+const MENU_BUTTON_BASE: &str = r#"relative grid grid-cols-[auto_1fr_auto] overflow-hidden w-full box-border items-center p-2 border-none rounded-md text-sm
 bg-transparent text-[var(--sidebar-foreground)] cursor-pointer gap-2
 outline-none text-left no-underline transition-[width,height,padding] duration-200 ease-out
 hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]
@@ -556,27 +461,27 @@ focus-visible:shadow-[0_0_0_2px_var(--sidebar-ring)]
 active:bg-[var(--sidebar-accent)] active:text-[var(--sidebar-accent-foreground)]
 disabled:opacity-50 disabled:pointer-events-none aria-disabled:opacity-50 aria-disabled:pointer-events-none
 data-[active=true]:bg-[var(--sidebar-accent)] data-[active=true]:text-[var(--sidebar-accent-foreground)] data-[active=true]:font-medium
+group-data-[collapsible=icon]/sidebar-desktop:grid-cols-[1fr] group-data-[collapsible=icon]/sidebar-desktop:aspect-square group-data-[collapsible=icon]/sidebar-desktop:p-0 group-data-[collapsible=icon]/sidebar-desktop:gap-0 group-data-[collapsible=icon]/sidebar-desktop:place-items-center
 [&_svg]:size-4 [&_svg]:shrink-0
-[&>span:last-child]:overflow-hidden [&>span:last-child]:text-ellipsis [&>span:last-child]:whitespace-nowrap
-[&>span:last-child]:transition-opacity [&>span:last-child]:duration-200"#;
+[&>:first-child]:shrink-0
+[&>span]:overflow-hidden [&>span]:text-ellipsis [&>span]:whitespace-nowrap
+[&>span]:transition-opacity [&>span]:duration-200
+group-data-[collapsible=icon]/sidebar-desktop:[&>:not(:first-child)]:opacity-0 group-data-[collapsible=icon]/sidebar-desktop:[&>:not(:first-child)]:absolute group-data-[collapsible=icon]/sidebar-desktop:[&>:not(:first-child)]:pointer-events-none"#;
 
 #[component]
 pub fn SidebarMenuButton(
-    #[prop(into, default = Signal::derive(|| false))] is_active: Signal<bool>,
-    #[prop(default = SidebarMenuButtonVariant::Default)] variant: SidebarMenuButtonVariant,
-    #[prop(default = SidebarMenuButtonSize::Default)] size: SidebarMenuButtonSize,
+    #[prop(optional, into)] is_active: Signal<bool>,
     #[prop(optional, into)] class: String,
+    #[prop(optional)] variant: SidebarMenuButtonVariant,
     children: Children,
 ) -> impl IntoView {
-    let size_class = size.tw_class();
     let variant_class = variant.tw_class();
-    let merged = tw_merge!(MENU_BUTTON_BASE, size_class, variant_class, class);
+    let merged = tw_merge!(MENU_BUTTON_BASE, variant_class, class);
 
     view! {
         <button
             data-sidebar="menu-button"
             data-slot="sidebar-menu-button"
-            data-size=size.as_str()
             data-variant=variant.as_str()
             data-active=move || if is_active.get() { "true" } else { "false" }
             class=merged
@@ -592,13 +497,13 @@ pub fn SidebarMenuButton(
 
 #[component]
 pub fn SidebarMenuAction(
-    #[prop(default = false)] show_on_hover: bool,
+    #[prop(optional)] show_on_hover: bool,
     #[prop(optional, into)] class: String,
     children: Children,
 ) -> impl IntoView {
     let show = if show_on_hover { "true" } else { "false" };
     let merged = tw_merge!(
-r#"absolute top-1.5 right-1 grid w-5 place-items-center p-0 border-none rounded-md
+        r#"absolute top-1.5 right-1 grid w-5 place-items-center p-0 border-none rounded-md
 aspect-square bg-transparent text-[var(--sidebar-foreground)] cursor-pointer outline-none
 hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]
 group-data-[collapsible=icon]/sidebar-desktop:opacity-0 group-data-[collapsible=icon]/sidebar-desktop:pointer-events-none
@@ -622,7 +527,7 @@ pub fn SidebarMenuBadge(
     children: Children,
 ) -> impl IntoView {
     let merged = tw_merge!(
-r#"absolute top-1.5 right-1 grid min-w-5 h-5 place-items-center px-1 rounded-md
+        r#"absolute top-1.5 right-1 grid min-w-5 h-5 place-items-center px-1 rounded-md
 text-[var(--sidebar-foreground)] text-xs tabular-nums font-medium pointer-events-none
 select-none transition-opacity duration-200 group-data-[collapsible=icon]/sidebar-desktop:opacity-0
 group-data-[collapsible=icon]/sidebar-desktop:pointer-events-none"#,
@@ -640,9 +545,13 @@ group-data-[collapsible=icon]/sidebar-desktop:pointer-events-none"#,
 // ==========================================================
 
 #[component]
-pub fn SidebarMenuSkeleton(#[prop(default = false)] show_icon: bool) -> impl IntoView {
+pub fn SidebarMenuSkeleton(#[prop(optional)] show_icon: bool) -> impl IntoView {
     view! {
-        <div data-sidebar="menu-skeleton" data-slot="sidebar-menu-skeleton" class="grid gap-2 items-center px-2 h-8 rounded-md grid-cols-[auto_1fr]">
+        <div
+            data-sidebar="menu-skeleton"
+            data-slot="sidebar-menu-skeleton"
+            class="grid gap-2 items-center px-2 h-8 rounded-md grid-cols-[auto_1fr]"
+        >
             {if show_icon { view! { <Skeleton class="rounded-md size-4" /> }.into_any() } else { view! {}.into_any() }}
             <Skeleton class="h-4" />
         </div>
@@ -655,7 +564,14 @@ pub fn SidebarMenuSkeleton(#[prop(default = false)] show_icon: bool) -> impl Int
 
 #[component]
 pub fn SidebarSeparator() -> impl IntoView {
-    view! { <div data-sidebar="separator" data-slot="sidebar-separator" class="mx-2 w-auto h-px shrink-0 bg-[var(--sidebar-border)]" role="separator" /> }
+    view! {
+        <div
+            data-sidebar="separator"
+            data-slot="sidebar-separator"
+            class="mx-2 w-auto h-px shrink-0 bg-[var(--sidebar-border)]"
+            role="separator"
+        />
+    }
 }
 
 // ==========================================================
@@ -665,7 +581,7 @@ pub fn SidebarSeparator() -> impl IntoView {
 #[component]
 pub fn SidebarMenuSub(#[prop(optional, into)] class: String, children: Children) -> impl IntoView {
     let merged = tw_merge!(
-r#"grid py-0.5 px-2.5 border-l border-[var(--sidebar-border)] mx-3.5 gap-1 list-none translate-x-px
+        r#"grid py-0.5 px-2.5 border-l border-[var(--sidebar-border)] mx-3.5 gap-1 list-none translate-x-px
 group-data-[collapsible=icon]/sidebar-desktop:overflow-hidden group-data-[collapsible=icon]/sidebar-desktop:max-h-0
 group-data-[collapsible=icon]/sidebar-desktop:p-0 group-data-[collapsible=icon]/sidebar-desktop:m-0
 group-data-[collapsible=icon]/sidebar-desktop:opacity-0 group-data-[collapsible=icon]/sidebar-desktop:pointer-events-none
@@ -728,9 +644,9 @@ data-[active=true]:bg-[var(--sidebar-accent)] data-[active=true]:text-[var(--sid
 
 #[component]
 pub fn SidebarMenuSubButton(
-    #[prop(default = false)] is_active: bool,
-    #[prop(default = SidebarMenuSubButtonSize::Md)] size: SidebarMenuSubButtonSize,
+    #[prop(optional)] is_active: bool,
     #[prop(optional, into)] class: String,
+    #[prop(optional)] size: SidebarMenuSubButtonSize,
     #[prop(into)] href: String,
     children: Children,
 ) -> impl IntoView {
@@ -739,7 +655,14 @@ pub fn SidebarMenuSubButton(
     let merged = tw_merge!(MENU_SUB_BUTTON_BASE, size_class, class);
 
     view! {
-        <a data-sidebar="menu-sub-button" data-slot="sidebar-menu-sub-button" data-size=size.as_str() data-active=data_active class=merged href=href>
+        <a
+            data-sidebar="menu-sub-button"
+            data-slot="sidebar-menu-sub-button"
+            data-size=size.as_str()
+            data-active=data_active
+            class=merged
+            href=href
+        >
             {children()}
         </a>
     }
