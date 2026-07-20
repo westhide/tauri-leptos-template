@@ -42,7 +42,7 @@ pub fn shell(options: LeptosOptions) -> Result<impl IntoView> {
                 <HashedStylesheet options />
                 <MetaTags />
             </head>
-            <body>
+            <body class="h-screen">
                 <Main />
             </body>
         </html>

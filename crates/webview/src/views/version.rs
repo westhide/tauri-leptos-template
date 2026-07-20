@@ -1,22 +1,15 @@
 use leptos::prelude::*;
 use service::routes::version::version;
 
+use crate::views::Loading;
+
 #[component]
 pub fn Version() -> impl IntoView {
     let version = LocalResource::new(version);
 
     view! {
-        <div>
-            <p>
-                Version:
-                {move || {
-                    version
-                        .map(|res| match res {
-                            Ok(v) => v.clone(),
-                            Err(e) => format!("Error loading version: {e}"),
-                        })
-                }}
-            </p>
-        </div>
+        <Suspense fallback=Loading>
+            <div>Version: {move || Suspend::new(version)}</div>
+        </Suspense>
     }
 }

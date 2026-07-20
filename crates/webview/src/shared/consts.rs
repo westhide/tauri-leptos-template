@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 pub struct Pagination;
 
 impl Pagination {
@@ -16,3 +18,5 @@ impl QueryParams {
     pub const SIZE: &str = "size";
     pub const START_DATE: &str = "start_date";
 }
+
+pub const MAX_ROUTING_TIME: Duration = Duration::from_secs(1);
