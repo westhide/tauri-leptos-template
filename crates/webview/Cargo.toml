@@ -48,8 +48,10 @@ console_error_panic_hook = { default-features = false, version = "0.1" }
 console_log              = { default-features = false, version = "1.0", features = ["color"] }
 
 # RustUI
+gloo-net   = { default-features = false, version = "0.7" }
 icons     = { default-features = false, version = "0.18", features = ["leptos", "leptos_animated"] }
 leptos_ui = { default-features = false, version = "0.3" }
+serde_json = { default-features = false, version = "1" }
 strum     = { default-features = false, version = "0.28", features = ["derive", "std"] }
 time      = { default-features = false, version = "0.3", features = ["std"] }
 tw_merge  = { default-features = false, version = "0.1", features = ["variant"] }
