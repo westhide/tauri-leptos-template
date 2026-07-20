@@ -10,7 +10,7 @@ use leptos::prelude::*;
 use leptos_meta::provide_meta_context;
 use leptos_router::{
     SsrMode,
-    components::{A, Route, Router, Routes},
+    components::{Route, Router, Routes},
     path,
     static_routes::StaticRoute,
 };
@@ -30,11 +30,6 @@ pub fn Main() -> impl IntoView {
 
     view! {
         <Router>
-            <nav>
-                <A href="/">"Home"</A>
-                <A href="/version">"Version"</A>
-                <A href="/pingpong">"PingPong"</A>
-            </nav>
             <ErrorBoundary fallback=error_fallback>
                 <main>
                     <Routes fallback=Fallback>

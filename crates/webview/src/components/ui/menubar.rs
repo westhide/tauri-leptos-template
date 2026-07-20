@@ -71,7 +71,7 @@ pub fn MenubarCheckboxItem(
             class=class
             role="menuitemcheckbox"
             aria-checked=move || checked.get().to_string()
-            on:click=move |_| checked.update(|v| *v = !*v)
+            on:click=move |_| checked.update(|value| *value ^= true)
         >
             <span class="flex absolute left-1.5 justify-center items-center pointer-events-none size-4">
                 <Check class="opacity-0 group-aria-checked:opacity-100 size-3.5" />

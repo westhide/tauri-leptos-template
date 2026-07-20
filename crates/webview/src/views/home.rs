@@ -1,6 +1,6 @@
 use leptos::{ev::SubmitEvent, prelude::*};
 
-use crate::shared::logger::info;
+use crate::{bootstrap::Bootstrap, shared::logger::info};
 
 #[component]
 pub fn Home() -> impl IntoView {
@@ -17,17 +17,9 @@ pub fn Home() -> impl IntoView {
     };
 
     view! {
-        <>
+        <Bootstrap>
             <h1>"Welcome to Tauri + Leptos"</h1>
 
-            <div>
-                <a href="https://tauri.app" target="_blank">
-                    <img src="/assets/tauri.svg" />
-                </a>
-                <a href="https://docs.rs/leptos/" target="_blank">
-                    <img src="/assets/leptos.svg" />
-                </a>
-            </div>
             <p>"Click on the Tauri and Leptos logos to learn more."</p>
 
             <form on:submit=submit>
@@ -35,6 +27,6 @@ pub fn Home() -> impl IntoView {
                 <button type="submit">"Greet"</button>
             </form>
             <p>Version: {version}</p>
-        </>
+        </Bootstrap>
     }
 }

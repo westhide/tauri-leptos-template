@@ -58,7 +58,7 @@ pub fn Drawer(
     let lock_scroll_attr = if lock_body_scroll { "true" } else { "false" };
 
     view! {
-        <link rel="stylesheet" href="/styles/drawer.css" />
+        <link rel="stylesheet" href="/assets/styles/drawer.css" />
 
         <div
             data-name="DrawerOverlay"
@@ -72,7 +72,7 @@ pub fn Drawer(
 
         {children()}
 
-        <script type="module" src="/script/drawer.js"></script>
+        <script type="module" src="/assets/script/drawer.js"></script>
     }
 }
 

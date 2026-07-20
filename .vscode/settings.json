@@ -8,5 +8,10 @@
 		"webview/hydrate",
 		"webview/ssr"
 	],
-	"rust-analyzer.rustfmt.overrideCommand": ["leptosfmt", "--stdin", "--rustfmt"]
+	"rust-analyzer.rustfmt.overrideCommand": [
+		"leptosfmt",
+		"--experimental-tailwind",
+		"--rustfmt",
+		"--stdin"
+	]
 }
