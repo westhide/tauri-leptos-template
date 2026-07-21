@@ -20,6 +20,8 @@ bytes              = { default-features = false, version = "1" }
 chrono             = { default-features = false, version = "0.4" }
 clap               = { default-features = false, version = "4.5" }
 config             = { default-features = false, version = "0.15" }
+futures            = { default-features = false, version = "0.3" }
+gloo               = { default-features = false, version = "0.12" }
 leptos             = { default-features = false, version = "0.8" }
 leptos_axum        = { default-features = false, version = "0.8" }
 leptos_meta        = { default-features = false, version = "0.8" }

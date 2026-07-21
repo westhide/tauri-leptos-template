@@ -3,14 +3,25 @@ use std::{
     net::AddrParseError as StdNetAddrParseError,
 };
 
+use axum::{
+    Error as AxumError,
+    http::{
+        Error as HttpError, header::InvalidHeaderValue as HttpInvalidHeaderValue,
+        uri::InvalidUri as HttpInvalidUri,
+    },
+};
 use config::ConfigError;
-use leptos::server_fn::{
-    codec::JsonEncoding,
-    error::{FromServerFnError, ServerFnErrorErr},
+use leptos::{
+    serde_json::Error as JsonError,
+    server_fn::{
+        codec::JsonEncoding,
+        error::{FromServerFnError, ServerFnErrorErr},
+    },
 };
 use libgrpc::tonic::Status as GrpcStatus;
 #[cfg(feature = "server")]
 use libgrpc::tonic::transport::Error as GrpcTransportError;
+use reqwest::Error as ReqwestError;
 use serde::{Deserialize, Serialize};
 use tracing_subscriber::filter::{
     FromEnvError as TracingFilterFromEnvError, ParseError as TracingFilterParseError,
@@ -19,29 +30,47 @@ use tracing_subscriber::filter::{
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
-    StdEnvVarError(#[from] StdEnvVarError),
+    StdEnvVar(#[from] StdEnvVarError),
 
     #[error(transparent)]
-    StdIoError(#[from] StdIoError),
+    StdIo(#[from] StdIoError),
 
     #[error(transparent)]
-    StdNetAddrParseError(#[from] StdNetAddrParseError),
+    StdNetAddrParse(#[from] StdNetAddrParseError),
 
     #[error(transparent)]
-    ConfigError(#[from] ConfigError),
+    Axum(#[from] AxumError),
+
+    #[error(transparent)]
+    Config(#[from] ConfigError),
 
     #[error(transparent)]
     GrpcStatus(#[from] GrpcStatus),
 
     #[cfg(feature = "server")]
     #[error(transparent)]
-    GrpcTransportError(#[from] GrpcTransportError),
+    GrpcTransport(#[from] GrpcTransportError),
 
     #[error(transparent)]
-    TracingFilterFromEnvError(#[from] TracingFilterFromEnvError),
+    Http(#[from] HttpError),
 
     #[error(transparent)]
-    TracingFilterParseError(#[from] TracingFilterParseError),
+    HttpInvalidHeaderValue(#[from] HttpInvalidHeaderValue),
+
+    #[error(transparent)]
+    HttpInvalidUri(#[from] HttpInvalidUri),
+
+    #[error(transparent)]
+    Json(#[from] JsonError),
+
+    #[error(transparent)]
+    Reqwest(#[from] ReqwestError),
+
+    #[error(transparent)]
+    TracingFilterFromEnv(#[from] TracingFilterFromEnvError),
+
+    #[error(transparent)]
+    TracingFilterParse(#[from] TracingFilterParseError),
 
     #[error("{0}")]
     Error(String),
@@ -51,7 +80,7 @@ pub enum Error {
 #[derive(Debug, Clone, Serialize, Deserialize, thiserror::Error)]
 pub enum ServerFnError {
     #[error(transparent)]
-    ServerFnError(#[from] ServerFnErrorErr),
+    ServerFn(#[from] ServerFnErrorErr),
 
     #[error("{0}")]
     Error(String),
@@ -67,7 +96,7 @@ impl FromServerFnError for ServerFnError {
     type Encoder = JsonEncoding;
 
     fn from_server_fn_error(err: ServerFnErrorErr) -> Self {
-        Self::ServerFnError(err)
+        Self::ServerFn(err)
     }
 }
 

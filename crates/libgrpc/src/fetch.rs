@@ -40,7 +40,7 @@ pub enum Error {
     GlooNet(#[from] GlooNetError),
 
     #[error(transparent)]
-    HttpError(#[from] HttpError),
+    Http(#[from] HttpError),
 
     #[error(transparent)]
     HttpHeaderToStr(#[from] HttpHeaderToStrError),

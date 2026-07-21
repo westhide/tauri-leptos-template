@@ -31,6 +31,7 @@ workspace = true
 libgrpc = { workspace = true, features = ["gzip"] }
 
 axum               = { workspace = true, features = ["http2", "macros", "query", "tower-log", "tracing"] }
+chrono             = { workspace = true, features = ["serde"] }
 clap               = { workspace = true, features = ["color", "derive", "env", "error-context", "help", "std", "suggestions", "usage"] }
 config             = { workspace = true, features = ["toml"] }
 leptos             = { workspace = true, features = ["tracing"] }
@@ -43,6 +44,9 @@ tokio-util         = { workspace = true, features = ["rt"] }
 tower-http         = { workspace = true, features = ["cors"] }
 tracing            = { workspace = true, features = ["attributes", "log", "release_max_level_info", "std"] }
 tracing-subscriber = { workspace = true, features = ["ansi", "env-filter", "fmt", "smallvec", "std", "tracing-log"] }
+
+# Http Client
+reqwest = { default-features = false, version = "0.13", features = ["charset", "http2", "json", "query", "rustls"] }
 
 
 [dev-dependencies]

@@ -13,7 +13,7 @@ use crate::{
 
 static CONFIG: OnceLock<Config> = OnceLock::new();
 
-#[instrument(level = Level::DEBUG, skip_all, ret)]
+#[instrument(level = Level::DEBUG, skip_all, ret, err)]
 #[server(input= Json)]
 pub async fn get_config() -> Result<Config, ServerFnError> {
     Ok(CONFIG.get_or_init(Config::from_ctx).clone())

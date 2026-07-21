@@ -12,7 +12,9 @@ crate-type = ["cdylib", "rlib", "staticlib"]
 
 
 [features]
-default    = ["rkyv-codec"]
+default = ["rkyv-codec"]
+
+browser    = []
 gzip       = ["tonic/gzip"]      # TODO: zstd(wasm)
 rkyv-codec = ["dep:rkyv"]
 router     = ["tonic/router"]
@@ -25,6 +27,8 @@ workspace = true
 
 [dependencies]
 bytes     = { workspace = true }
+futures   = { workspace = true, features = ["std"] }
+gloo      = { workspace = true, features = ["net"] }
 thiserror = { workspace = true }
 
 prost = { default-features = false, version = "0.14", features = ["derive"] }
@@ -32,8 +36,6 @@ rkyv  = { default-features = false, version = "0.8", features = ["std", "unalign
 tonic = { default-features = false, version = "0.14", features = ["codegen"] }
 
 # Web
-futures              = { default-features = false, version = "0.3", features = ["alloc"] }
-gloo                 = { default-features = false, version = "0.12", features = ["net"] }
 http-body            = { default-features = false, version = "1.0" }
 http-body-util       = { default-features = false, version = "0.1" }
 tonic-web            = { default-features = false, version = "0.14" }

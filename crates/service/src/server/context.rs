@@ -8,7 +8,7 @@ use tokio_util::{sync::CancellationToken, task::TaskTracker};
 use crate::{
     config::Config,
     impl_from_ctx,
-    server::shutdown::ShutdownSignal,
+    server::{extension::client::HttpClient, shutdown::ShutdownSignal},
     shared::{
         Null,
         error::Result,
@@ -47,8 +47,10 @@ impl<S> Context<S> {
     {
         let Context { state, task_tracker, cancellation } = self.clone();
         let config = Config::from_ref(&state);
+        let client = HttpClient::new();
         move || {
             provide_context(state.clone());
+            provide_context(client.clone());
             provide_context(config.clone());
             provide_context(task_tracker.clone());
             provide_context(cancellation.clone());
@@ -97,6 +99,6 @@ where
 impl_from_ctx!(Nonce);
 
 // Unsafe: must call provide_context() hook
-impl_from_ctx!(Config);
+impl_from_ctx!(HttpClient);
 impl_from_ctx!(TaskTracker);
 impl_from_ctx!(CancellationToken);

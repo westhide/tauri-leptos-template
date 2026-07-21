@@ -1,5 +1,11 @@
 use icons::{common::IconType, icon_component::LeptosIcon};
-use leptos::prelude::*;
+use leptos::{ev::SubmitEvent, prelude::*, task::spawn_local};
+use service::{
+    config::{Config, server::SaasPlatform},
+    models::namespace::register::RegisterParams,
+    routes::register::register,
+    traits::from_ctx::FromCtx,
+};
 
 use crate::{
     components::ui::{
@@ -8,15 +14,23 @@ use crate::{
         input::{Input, InputType},
         label::Label,
     },
+    shared::logger::error,
     views::fallback::Loading,
 };
 
 #[component]
 pub fn Register() -> impl IntoView {
-    let show_password = RwSignal::new(false);
+    let username = RwSignal::new(String::new());
+
+    let password = RwSignal::new(String::new());
     let password_type = RwSignal::new(InputType::Password);
-    let show_confirm_password = RwSignal::new(false);
+    let show_password = RwSignal::new(false);
+
+    let confirm_password = RwSignal::new(String::new());
     let confirm_password_type = RwSignal::new(InputType::Password);
+    let show_confirm_password = RwSignal::new(false);
+
+    let error_message = RwSignal::new(None::<String>);
 
     let toggle_show_password = move |_| {
         show_password.update(|value| *value ^= true);
@@ -36,7 +50,35 @@ pub fn Register() -> impl IntoView {
         }
     };
 
-    let handle_register = |_| {};
+    let handle_register = move |ev: SubmitEvent| {
+        ev.prevent_default();
+
+        let username = username.get_untracked();
+        let password = password.get_untracked();
+        let confirm_password = confirm_password.get_untracked();
+
+        if password != confirm_password {
+            error_message.set(Some("密码不一致".into()));
+            return;
+        }
+
+        let config = Config::from_ctx();
+        let SaasPlatform { captcha, namespace, .. } = config.server.saas_platform.clone();
+
+        let params = RegisterParams {
+            nickname: username.clone(),
+            username,
+            password,
+            captcha_verification: captcha,
+        };
+
+        spawn_local(async move {
+            if let Err(err) = register(namespace, params).await {
+                error!(%err)
+            } else {
+            }
+        });
+    };
 
     view! {
         <Transition fallback=Loading>
@@ -49,7 +91,7 @@ pub fn Register() -> impl IntoView {
                                 <CardDescription>Create a new account</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <form>
+                                <form on:submit=handle_register>
                                     <div class="grid gap-6">
                                         <div class="grid gap-3">
                                             <Label html_for="username">Username</Label>
@@ -58,6 +100,7 @@ pub fn Register() -> impl IntoView {
                                                 required=true
                                                 autocomplete="username"
                                                 placeholder="Enter your username"
+                                                bind_value=username
                                             />
                                         </div>
                                         <div class="grid gap-3">
@@ -71,6 +114,8 @@ pub fn Register() -> impl IntoView {
                                                     autocomplete="new-password"
                                                     minlength=8
                                                     placeholder="Enter your password"
+                                                    bind_value=password
+                                                    on:input=move |_| error_message.set(None)
                                                 />
                                                 <button
                                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
@@ -100,6 +145,8 @@ pub fn Register() -> impl IntoView {
                                                     autocomplete="new-password"
                                                     minlength=8
                                                     placeholder="Confirm your password"
+                                                    bind_value=confirm_password
+                                                    on:input=move |_| error_message.set(None)
                                                 />
                                                 <button
                                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
@@ -118,10 +165,11 @@ pub fn Register() -> impl IntoView {
                                                 </button>
                                             </div>
                                         </div>
+                                        <div role="alert" class="text-sm font-normal text-destructive">
+                                            {error_message}
+                                        </div>
                                         <div class="flex flex-col gap-3">
-                                            <Button class="w-full" on:click=handle_register>
-                                                Register
-                                            </Button>
+                                            <Button class="w-full">Register</Button>
                                         </div>
                                     </div>
                                     <div class="mt-4 text-sm text-center">

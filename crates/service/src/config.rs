@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     config::{client::Client, logger::Logger, server::Server},
+    impl_from_ctx,
     shared::error::Result,
 };
 
@@ -42,3 +43,6 @@ impl Config {
         Ok(config.try_deserialize()?)
     }
 }
+
+// Unsafe: must call provide_context()
+impl_from_ctx!(Config);

@@ -1,5 +1,6 @@
 use std::io::Error as StdIoError;
 
+use gloo::net::Error as GlooNetError;
 use leptos::{
     config::errors::LeptosConfigError, serde_json::Error as JsonError, wasm_bindgen::JsValue,
 };
@@ -15,7 +16,10 @@ use crate::shared::logger::log::ParseLevelError as LogParseLevelError;
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
-    StdIoError(#[from] StdIoError),
+    StdIo(#[from] StdIoError),
+
+    #[error(transparent)]
+    GlooNet(#[from] GlooNetError),
 
     #[error(transparent)]
     GrpcStatus(#[from] GrpcStatus),
@@ -24,22 +28,22 @@ pub enum Error {
     HttpInvalidUri(#[from] HttpInvalidUri),
 
     #[error("{0}")]
-    JsError(String),
+    Js(String),
 
     #[error(transparent)]
-    JsonError(#[from] JsonError),
+    Json(#[from] JsonError),
 
     #[error(transparent)]
-    LeptosConfigError(#[from] LeptosConfigError),
+    LeptosConfig(#[from] LeptosConfigError),
 
     #[error(transparent)]
-    LogParseLevelError(#[from] LogParseLevelError),
+    LogParseLevel(#[from] LogParseLevelError),
 
     #[error("{0}")]
-    ServerFnError(String),
+    ServerFn(String),
 
     #[error(transparent)]
-    ServiceError(#[from] ServiceError),
+    Service(#[from] ServiceError),
 
     #[error("{0}")]
     Error(String),
@@ -47,7 +51,7 @@ pub enum Error {
 
 impl From<JsValue> for Error {
     fn from(err: JsValue) -> Self {
-        Self::JsError(format!("{err:?}"))
+        Self::Js(format!("{err:?}"))
     }
 }
 
@@ -59,7 +63,7 @@ impl From<Error> for JsValue {
 
 impl From<ServerFnError> for Error {
     fn from(err: ServerFnError) -> Self {
-        Self::ServerFnError(err.to_string())
+        Self::ServerFn(err.to_string())
     }
 }
 
