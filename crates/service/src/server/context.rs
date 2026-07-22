@@ -1,14 +1,12 @@
 use std::{ops::Deref, time::Duration};
 
 use axum::extract::FromRef;
-use leptos::{config::LeptosOptions, context::provide_context, nonce::Nonce};
+use leptos::config::LeptosOptions;
 use tokio::time::timeout;
 use tokio_util::{sync::CancellationToken, task::TaskTracker};
 
 use crate::{
-    config::Config,
-    impl_from_ctx,
-    server::{extension::client::HttpClient, shutdown::ShutdownSignal},
+    server::shutdown::ShutdownSignal,
     shared::{
         Null,
         error::Result,
@@ -38,23 +36,6 @@ pub trait ShutdownTimeout {
 impl<S> Context<S> {
     pub fn new(state: S) -> Self {
         Self { state, task_tracker: TaskTracker::new(), cancellation: CancellationToken::new() }
-    }
-
-    pub fn provide_context_hook(&self) -> impl Fn() + Clone + Send + 'static
-    where
-        S: Clone + Send + Sync + 'static,
-        Config: FromRef<S>,
-    {
-        let Context { state, task_tracker, cancellation } = self.clone();
-        let config = Config::from_ref(&state);
-        let client = HttpClient::new();
-        move || {
-            provide_context(state.clone());
-            provide_context(client.clone());
-            provide_context(config.clone());
-            provide_context(task_tracker.clone());
-            provide_context(cancellation.clone());
-        }
     }
 
     pub fn graceful_shutdown_signal(&self) -> Result<impl Future<Output = Null> + use<S>>
@@ -94,11 +75,3 @@ where
         Self::from_ref(&ctx.state)
     }
 }
-
-// Safety: Nonce provided
-impl_from_ctx!(Nonce);
-
-// Unsafe: must call provide_context() hook
-impl_from_ctx!(HttpClient);
-impl_from_ctx!(TaskTracker);
-impl_from_ctx!(CancellationToken);

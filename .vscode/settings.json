@@ -13,5 +13,6 @@
 		"--experimental-tailwind",
 		"--rustfmt",
 		"--stdin"
-	]
+	],
+	"cSpell.words": ["leptos", "libgrpc", "surrealdb"]
 }

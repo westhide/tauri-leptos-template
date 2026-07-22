@@ -1,24 +1,39 @@
-// use std::ops::Deref;
+use std::ops::Deref;
 
-// pub type PgPool = Pool<ConnectionManager<PgConnection>>;
+use surrealdb::{
+    Error, Surreal,
+    engine::any::{Any, connect},
+};
 
-// #[derive(Debug)]
-// pub struct Database {
-//     pool: PgPool,
-// }
+use crate::{config::server::Database as DBConfig, shared::logger::debug};
 
-// impl Database {
-//     pub fn new(url: &str) -> Result<Self, PoolError> {
-//         let manager = ConnectionManager::new(url);
-//         let pool = Pool::builder().build(manager)?;
-//         Ok(Self { pool })
-//     }
-// }
+const INIT_SQL: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/sql/init.surql"));
 
-// impl Deref for Database {
-//     type Target = PgPool;
+#[derive(Debug, Clone)]
+pub struct Database {
+    client: Surreal<Any>,
+}
 
-//     fn deref(&self) -> &Self::Target {
-//         &self.pool
-//     }
-// }
+impl Deref for Database {
+    type Target = Surreal<Any>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.client
+    }
+}
+
+impl Database {
+    pub async fn new(config: &DBConfig) -> Result<Self, Error> {
+        let DBConfig { url, namespace } = config;
+
+        let client = connect(url).await?;
+        client.health().await?;
+        debug!("SurrealDB connected: {url}");
+
+        client.use_ns(namespace).await?;
+        client.query(INIT_SQL).await?;
+        debug!("SurrealDB initialized");
+
+        Ok(Self { client })
+    }
+}

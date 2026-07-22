@@ -1,5 +1,5 @@
 use leptos::{prelude::*, wasm_bindgen, wasm_bindgen::prelude::*};
-use service::routes::config::get_config;
+use service::routes::config;
 
 use crate::{
     shared::{
@@ -14,7 +14,7 @@ use crate::{
 // wasm-bindgen-futures runtime init during hydrate_body function,
 // so call this hydrate hook in Main component
 pub async fn hydrate_hook() -> Result<Null> {
-    let config = get_config().await?;
+    let config = config::get().await?;
 
     init_logger(config.logger.level);
 

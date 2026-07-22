@@ -23,6 +23,7 @@ use libgrpc::tonic::Status as GrpcStatus;
 use libgrpc::tonic::transport::Error as GrpcTransportError;
 use reqwest::Error as ReqwestError;
 use serde::{Deserialize, Serialize};
+use surrealdb::Error as SurrealdbError;
 use tracing_subscriber::filter::{
     FromEnvError as TracingFilterFromEnvError, ParseError as TracingFilterParseError,
 };
@@ -65,6 +66,9 @@ pub enum Error {
 
     #[error(transparent)]
     Reqwest(#[from] ReqwestError),
+
+    #[error(transparent)]
+    Surrealdb(#[from] SurrealdbError),
 
     #[error(transparent)]
     TracingFilterFromEnv(#[from] TracingFilterFromEnvError),

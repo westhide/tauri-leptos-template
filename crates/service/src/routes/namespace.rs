@@ -13,7 +13,7 @@ use crate::{
 
 #[instrument(level = Level::DEBUG, skip_all, ret, err)]
 #[server(input= Json)]
-pub async fn get_namespace(domain: String) -> Result<GetNamespaceData, ServerFnError> {
+pub async fn get(domain: String) -> Result<GetNamespaceData, ServerFnError> {
     use crate::server::extension::client::HttpClient;
 
     let config = Config::from_ctx();

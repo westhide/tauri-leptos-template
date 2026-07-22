@@ -9,9 +9,17 @@ use leptos_axum::{
     generate_route_list_with_exclusions_and_ssg_and_context as generate_route_list,
     site_pkg_dir_service, site_pkg_dir_service_route_path,
 };
+use tokio_util::{sync::CancellationToken, task::TaskTracker};
 
 use crate::{
-    config::Config, routes::version::version, server::context::Context, shared::error::Result,
+    config::Config,
+    impl_from_ctx,
+    routes::version::version,
+    server::{
+        context::Context,
+        extension::{client::HttpClient, database::Database},
+    },
+    shared::error::Result,
 };
 
 pub async fn router<F, IV, S, S2>(ctx: Context<S>, shell: F) -> Result<Router<S2>>
@@ -22,8 +30,24 @@ where
     Config: FromRef<S>,
     LeptosOptions: FromRef<Context<S>>,
 {
+    let ctx_hook = {
+        let Context { state, task_tracker, cancellation } = ctx.clone();
+
+        let config = Config::from_ref(&state);
+        let client = HttpClient::new();
+        let database = Database::new(&config.server.database).await?;
+
+        move || {
+            provide_context(state.clone());
+            provide_context(config.clone());
+            provide_context(client.clone());
+            provide_context(database.clone());
+            provide_context(task_tracker.clone());
+            provide_context(cancellation.clone());
+        }
+    };
+
     let options = LeptosOptions::from_ref(&ctx);
-    let ctx_hook = ctx.provide_context_hook();
 
     let render_fn = {
         let shell = shell.clone();
@@ -49,3 +73,12 @@ where
 
     Ok(router)
 }
+
+// Safety: Nonce provided
+impl_from_ctx!(Nonce);
+
+// Unsafe: must call provide_context() hook
+impl_from_ctx!(Database);
+impl_from_ctx!(HttpClient);
+impl_from_ctx!(TaskTracker);
+impl_from_ctx!(CancellationToken);

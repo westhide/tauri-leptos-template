@@ -20,7 +20,7 @@ required-features = ["server"]
 default = []
 
 mimalloc = ["dep:mimalloc"]
-server   = ["axum/tokio", "axum/ws", "dep:leptos_axum", "leptos/ssr", "leptos_axum/default", "libgrpc/router", "libgrpc/transport", "tokio/net", "tokio/rt-multi-thread", "tokio/signal"]
+server   = ["axum/tokio", "axum/ws", "dep:leptos_axum", "leptos/ssr", "leptos_axum/default", "libgrpc/router", "libgrpc/transport", "surrealdb/kv-rocksdb", "tokio/net", "tokio/rt-multi-thread", "tokio/signal"]
 
 
 [lints]
@@ -38,6 +38,7 @@ leptos             = { workspace = true, features = ["tracing"] }
 leptos_axum        = { workspace = true, features = ["tracing"], optional = true }
 mimalloc           = { workspace = true, optional = true }
 serde              = { workspace = true, features = ["derive"] }
+surrealdb          = { workspace = true }
 thiserror          = { workspace = true }
 tokio              = { workspace = true, features = ["macros", "sync", "time"] }
 tokio-util         = { workspace = true, features = ["rt"] }
