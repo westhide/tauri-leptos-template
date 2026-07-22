@@ -6,9 +6,10 @@ use std::{
 use axum::{
     Error as AxumError,
     http::{
-        Error as HttpError, header::InvalidHeaderValue as HttpInvalidHeaderValue,
+        Error as HttpError, StatusCode, header::InvalidHeaderValue as HttpInvalidHeaderValue,
         uri::InvalidUri as HttpInvalidUri,
     },
+    response::{IntoResponse, Response},
 };
 use config::ConfigError;
 use leptos::{
@@ -80,6 +81,13 @@ pub enum Error {
     Error(String),
 }
 
+impl IntoResponse for Error {
+    fn into_response(self) -> Response {
+        const CODE: StatusCode = StatusCode::INTERNAL_SERVER_ERROR;
+        (CODE, self.to_string()).into_response()
+    }
+}
+
 /// ServerFnError
 #[derive(Debug, Clone, Serialize, Deserialize, thiserror::Error)]
 pub enum ServerFnError {
@@ -104,20 +112,12 @@ impl FromServerFnError for ServerFnError {
     }
 }
 
-#[cfg(feature = "server")]
-const _: () = {
-    use axum::{
-        http::StatusCode,
-        response::{IntoResponse, Response},
-    };
-
-    impl IntoResponse for ServerFnError {
-        fn into_response(self) -> Response {
-            const CODE: StatusCode = StatusCode::INTERNAL_SERVER_ERROR;
-            (CODE, self.to_string()).into_response()
-        }
+impl IntoResponse for ServerFnError {
+    fn into_response(self) -> Response {
+        const CODE: StatusCode = StatusCode::INTERNAL_SERVER_ERROR;
+        (CODE, self.to_string()).into_response()
     }
-};
+}
 
 macro_rules! err {
     ($($arg:tt)*) => {

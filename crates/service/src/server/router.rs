@@ -1,4 +1,5 @@
 use axum::{
+    Extension,
     extract::FromRef,
     http::StatusCode,
     routing::{Router, get},
@@ -14,7 +15,7 @@ use tokio_util::{sync::CancellationToken, task::TaskTracker};
 use crate::{
     config::Config,
     impl_from_ctx,
-    routes::version::version,
+    routes::{database::schemas, version::version},
     server::{
         context::Context,
         extension::{client::HttpClient, database::Database},
@@ -30,12 +31,14 @@ where
     Config: FromRef<S>,
     LeptosOptions: FromRef<Context<S>>,
 {
+    let config = Config::from_ref(&ctx.state);
+    let client = HttpClient::new();
+    let database = Database::new(&config.server.database).await?;
+
     let ctx_hook = {
         let Context { state, task_tracker, cancellation } = ctx.clone();
-
-        let config = Config::from_ref(&state);
-        let client = HttpClient::new();
-        let database = Database::new(&config.server.database).await?;
+        let client = client.clone();
+        let database = database.clone();
 
         move || {
             provide_context(state.clone());
@@ -65,10 +68,13 @@ where
     let router = Router::new()
         .route("/api/health", get(StatusCode::OK))
         .route("/api/version", get(version))
+        .route("/api/database/schemas", get(schemas))
         .leptos_routes_with_context(&ctx, routes, ctx_hook, render_fn)
         .route_service("/assets/{*path}", serve_dir.clone())
         .route_service(&pkg_dir_route, serve_dir)
         .fallback_service(fallback)
+        .layer(Extension(client))
+        .layer(Extension(database))
         .with_state(ctx);
 
     Ok(router)

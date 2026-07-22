@@ -6,6 +6,7 @@ use tokio::time::timeout;
 use tokio_util::{sync::CancellationToken, task::TaskTracker};
 
 use crate::{
+    config::Config,
     server::shutdown::ShutdownSignal,
     shared::{
         Null,
@@ -64,6 +65,15 @@ impl<S> Context<S> {
 
             info!("Shutdown complete");
         })
+    }
+}
+
+impl<S> FromRef<Context<S>> for Config
+where
+    Self: FromRef<S>,
+{
+    fn from_ref(ctx: &Context<S>) -> Self {
+        Self::from_ref(&ctx.state)
     }
 }
 
