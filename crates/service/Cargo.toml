@@ -15,6 +15,10 @@ crate-type = ["cdylib", "rlib", "staticlib"]
 name              = "server"
 required-features = ["server"]
 
+[[bin]]
+name              = "database"
+required-features = ["server"]
+
 
 [features]
 default = []
@@ -30,7 +34,7 @@ workspace = true
 [dependencies]
 libgrpc = { workspace = true, features = ["gzip"] }
 
-axum               = { workspace = true, features = ["http2", "macros", "query", "tower-log", "tracing"] }
+axum               = { workspace = true, features = ["http2", "json", "macros", "query", "tower-log", "tracing"] }
 chrono             = { workspace = true, features = ["serde"] }
 clap               = { workspace = true, features = ["color", "derive", "env", "error-context", "help", "std", "suggestions", "usage"] }
 config             = { workspace = true, features = ["toml"] }

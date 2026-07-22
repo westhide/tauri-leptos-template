@@ -1,6 +1,8 @@
--- USER DB
+-- Database: user_db
 DEFINE DATABASE IF NOT EXISTS user_db;
 
+-- Table: user_db.users
+USE DATABASE user_db;
 DEFINE TABLE IF NOT EXISTS users SCHEMAFULL;
 DEFINE FIELD username              ON users TYPE string;
 DEFINE FIELD nickname              ON users TYPE string;
