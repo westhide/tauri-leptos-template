@@ -14,7 +14,7 @@ use crate::{
 #[instrument(level = Level::DEBUG, skip_all, ret, err)]
 #[server(input= Json)]
 pub async fn register(id: String, params: RegisterParams) -> Result<RegisterData, ServerFnError> {
-    use crate::server::extension::client::HttpClient;
+    use crate::server::extension::fetch::HttpClient;
 
     let config = Config::from_ctx();
     let client = HttpClient::from_ctx();

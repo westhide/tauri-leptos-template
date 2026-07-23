@@ -10,19 +10,19 @@ use crate::{config::server::Database as DBConfig, shared::logger::debug};
 const INIT_SQL: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/sql/init.surql"));
 
 #[derive(Debug, Clone)]
-pub struct Database {
-    client: Surreal<Any>,
+pub struct DbClient {
+    inner: Surreal<Any>,
 }
 
-impl Deref for Database {
+impl Deref for DbClient {
     type Target = Surreal<Any>;
 
     fn deref(&self) -> &Self::Target {
-        &self.client
+        &self.inner
     }
 }
 
-impl Database {
+impl DbClient {
     pub async fn new(config: &DBConfig) -> Result<Self, Error> {
         let DBConfig { url, namespace } = config;
 
@@ -34,6 +34,6 @@ impl Database {
         client.query(INIT_SQL).await?;
         debug!("SurrealDB initialized");
 
-        Ok(Self { client })
+        Ok(Self { inner: client })
     }
 }

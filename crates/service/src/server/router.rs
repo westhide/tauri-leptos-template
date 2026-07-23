@@ -18,7 +18,7 @@ use crate::{
     routes::{database::schemas, version::version},
     server::{
         context::Context,
-        extension::{client::HttpClient, database::Database},
+        extension::{database::DbClient, fetch::HttpClient},
     },
     shared::error::Result,
 };
@@ -33,7 +33,7 @@ where
 {
     let config = Config::from_ref(&ctx.state);
     let client = HttpClient::new();
-    let database = Database::new(&config.server.database).await?;
+    let database = DbClient::new(&config.server.database).await?;
 
     let ctx_hook = {
         let Context { state, task_tracker, cancellation } = ctx.clone();
@@ -84,7 +84,7 @@ where
 impl_from_ctx!(Nonce);
 
 // Unsafe: must call provide_context() hook
-impl_from_ctx!(Database);
+impl_from_ctx!(DbClient);
 impl_from_ctx!(HttpClient);
 impl_from_ctx!(TaskTracker);
 impl_from_ctx!(CancellationToken);
