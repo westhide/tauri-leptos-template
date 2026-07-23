@@ -6,11 +6,11 @@ pub const USER_DB: &str = "user_db";
 
 pub const USER_TABLE: &str = "users";
 
-#[derive(Debug, Serialize, Deserialize, SurrealValue)]
+#[derive(Debug, Clone, Serialize, Deserialize, SurrealValue)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
     pub username: String,
-    pub nickname: String,
+    pub nickname: Option<String>,
     // TODO: crypto::argon2 hash
     pub password: String,
     pub captcha_verification: Option<String>,

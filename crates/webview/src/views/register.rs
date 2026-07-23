@@ -1,5 +1,6 @@
 use icons::{common::IconType, icon_component::LeptosIcon};
 use leptos::{ev::SubmitEvent, prelude::*, task::spawn_local};
+use leptos_router::hooks::use_navigate;
 use service::{
     config::{Config, server::SaasPlatform},
     models::namespace::register::RegisterParams,
@@ -30,6 +31,7 @@ pub fn Register() -> impl IntoView {
     let confirm_password_type = RwSignal::new(InputType::Password);
     let show_confirm_password = RwSignal::new(false);
 
+    let navigate = use_navigate();
     let error_message = RwSignal::new(None::<String>);
 
     let toggle_show_password = move |_| {
@@ -63,7 +65,7 @@ pub fn Register() -> impl IntoView {
         }
 
         let config = Config::from_ctx();
-        let SaasPlatform { captcha, namespace, .. } = config.server.saas_platform.clone();
+        let SaasPlatform { captcha, .. } = config.server.saas_platform.clone();
 
         let params = RegisterParams {
             nickname: username.clone(),
@@ -72,10 +74,17 @@ pub fn Register() -> impl IntoView {
             captcha_verification: captcha,
         };
 
+        let navigate = navigate.clone();
         spawn_local(async move {
-            if let Err(err) = register(namespace, params).await {
-                error!(%err)
-            } else {
+            match register(params).await {
+                Ok(data) => {
+                    error_message.set(None);
+                    navigate("/", Default::default());
+                },
+                Err(err) => {
+                    error!(%err);
+                    error_message.set(Some(err.to_string()))
+                },
             }
         });
     };
@@ -87,24 +96,24 @@ pub fn Register() -> impl IntoView {
                     <div class="grid gap-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Register</CardTitle>
-                                <CardDescription>Create a new account</CardDescription>
+                                <CardTitle>注册</CardTitle>
+                                <CardDescription>创建账号</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <form on:submit=handle_register>
                                     <div class="grid gap-6">
                                         <div class="grid gap-3">
-                                            <Label html_for="username">Username</Label>
+                                            <Label html_for="username">用户名</Label>
                                             <Input
                                                 id="username"
                                                 required=true
                                                 autocomplete="username"
-                                                placeholder="Enter your username"
+                                                placeholder="请输入用户名"
                                                 bind_value=username
                                             />
                                         </div>
                                         <div class="grid gap-3">
-                                            <Label html_for="password">Password</Label>
+                                            <Label html_for="password">密码</Label>
                                             <div class="relative">
                                                 <Input
                                                     class="pr-10"
@@ -113,7 +122,7 @@ pub fn Register() -> impl IntoView {
                                                     r#type=password_type
                                                     autocomplete="new-password"
                                                     minlength=8
-                                                    placeholder="Enter your password"
+                                                    placeholder="请输入密码"
                                                     bind_value=password
                                                     on:input=move |_| error_message.set(None)
                                                 />
@@ -135,7 +144,7 @@ pub fn Register() -> impl IntoView {
                                             </div>
                                         </div>
                                         <div class="grid gap-3">
-                                            <Label html_for="confirm-password">Confirm Password</Label>
+                                            <Label html_for="confirm-password">确认密码</Label>
                                             <div class="relative">
                                                 <Input
                                                     class="pr-10"
@@ -144,7 +153,7 @@ pub fn Register() -> impl IntoView {
                                                     r#type=confirm_password_type
                                                     autocomplete="new-password"
                                                     minlength=8
-                                                    placeholder="Confirm your password"
+                                                    placeholder="请再次输入密码"
                                                     bind_value=confirm_password
                                                     on:input=move |_| error_message.set(None)
                                                 />
@@ -169,13 +178,12 @@ pub fn Register() -> impl IntoView {
                                             {error_message}
                                         </div>
                                         <div class="flex flex-col gap-3">
-                                            <Button class="w-full">Register</Button>
+                                            <Button class="w-full">注册</Button>
                                         </div>
                                     </div>
                                     <div class="mt-4 text-sm text-center">
-                                        "Already have an account?"
-                                        <a href="/login" class="ml-2 underline underline-offset-4">
-                                            "Login"
+                                        "已有账号？" <a href="/login" class="ml-2 underline underline-offset-4">
+                                            "登录"
                                         </a>
                                     </div>
                                 </form>

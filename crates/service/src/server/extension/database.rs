@@ -31,7 +31,7 @@ impl DbClient {
         debug!("SurrealDB connected: {url}");
 
         client.use_ns(namespace).await?;
-        client.query(INIT_SQL).await?;
+        client.query(INIT_SQL).await?.check()?;
         debug!("SurrealDB initialized");
 
         Ok(Self { inner: client })

@@ -1,3 +1,4 @@
+pub mod login;
 pub mod register;
 
 // use chrono::{DateTime, Utc, serde::ts_milliseconds};

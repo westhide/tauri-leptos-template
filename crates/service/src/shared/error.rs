@@ -90,6 +90,7 @@ impl IntoResponse for Error {
 
 /// ServerFnError
 #[derive(Debug, Clone, Serialize, Deserialize, thiserror::Error)]
+#[serde(untagged)]
 pub enum ServerFnError {
     #[error(transparent)]
     ServerFn(#[from] ServerFnErrorErr),

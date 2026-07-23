@@ -18,7 +18,7 @@ use crate::{
     routes::{database::schemas, version::version},
     server::{
         context::Context,
-        extension::{database::DbClient, fetch::HttpClient},
+        extension::{database::DbClient, saas_platform::SaasPlatform},
     },
     shared::error::Result,
 };
@@ -32,19 +32,19 @@ where
     LeptosOptions: FromRef<Context<S>>,
 {
     let config = Config::from_ref(&ctx.state);
-    let client = HttpClient::new();
     let database = DbClient::new(&config.server.database).await?;
+    let saas_platform = SaasPlatform::new(&config.server.saas_platform);
 
     let ctx_hook = {
         let Context { state, task_tracker, cancellation } = ctx.clone();
-        let client = client.clone();
         let database = database.clone();
+        let saas_platform = saas_platform.clone();
 
         move || {
             provide_context(state.clone());
             provide_context(config.clone());
-            provide_context(client.clone());
             provide_context(database.clone());
+            provide_context(saas_platform.clone());
             provide_context(task_tracker.clone());
             provide_context(cancellation.clone());
         }
@@ -73,8 +73,8 @@ where
         .route_service("/assets/{*path}", serve_dir.clone())
         .route_service(&pkg_dir_route, serve_dir)
         .fallback_service(fallback)
-        .layer(Extension(client))
         .layer(Extension(database))
+        .layer(Extension(saas_platform))
         .with_state(ctx);
 
     Ok(router)
@@ -85,6 +85,6 @@ impl_from_ctx!(Nonce);
 
 // Unsafe: must call provide_context() hook
 impl_from_ctx!(DbClient);
-impl_from_ctx!(HttpClient);
+impl_from_ctx!(SaasPlatform);
 impl_from_ctx!(TaskTracker);
 impl_from_ctx!(CancellationToken);

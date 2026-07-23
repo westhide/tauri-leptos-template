@@ -48,5 +48,5 @@ pub async fn schemas(db: Extension<DbClient>) -> Result<Json<Schemas>> {
         databases.push(database);
     }
 
-    Ok(Schemas { namespace, databases }.into())
+    Ok(Json(Schemas { namespace, databases }))
 }

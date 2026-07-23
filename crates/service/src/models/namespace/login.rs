@@ -5,16 +5,19 @@ use crate::models::database::user::User;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RegisterParams {
+pub struct LoginParams {
     pub username: String,
-    pub nickname: String,
     pub password: String,
+    pub social_type: Option<i32>,
+    pub social_code: Option<String>,
+    pub social_state: Option<String>,
+    pub social_code_valid: Option<bool>,
     pub captcha_verification: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RegisterData {
+pub struct LoginData {
     pub user_id: i64,
     pub access_token: String,
     pub refresh_token: String,
@@ -24,12 +27,12 @@ pub struct RegisterData {
     pub must_change_password: Option<bool>,
 }
 
-impl From<(RegisterParams, RegisterData)> for User {
-    fn from((params, data): (RegisterParams, RegisterData)) -> Self {
+impl From<(LoginParams, LoginData)> for User {
+    fn from((params, data): (LoginParams, LoginData)) -> Self {
         let now = Utc::now();
         Self {
             username: params.username,
-            nickname: Some(params.nickname),
+            nickname: None,
             password: params.password,
             captcha_verification: params.captcha_verification,
             user_id: data.user_id,
