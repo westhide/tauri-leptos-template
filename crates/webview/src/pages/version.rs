@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use service::routes::version::version;
 
-use crate::views::Loading;
+use crate::pages::Loading;
 
 #[component]
 pub fn Version() -> impl IntoView {

@@ -19,4 +19,5 @@ impl QueryParams {
     pub const START_DATE: &str = "start_date";
 }
 
+pub const HOME_PAGE: &str = "/pages/dashboard";
 pub const MAX_ROUTING_TIME: Duration = Duration::from_secs(1);

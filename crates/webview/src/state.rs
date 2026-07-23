@@ -35,6 +35,6 @@ const _: () = {
         }
     }
 
-    // Unsafe: must call provide_context() hook
+    // Unsafe: must call provide_context()
     impl_from_ctx!(State);
 };

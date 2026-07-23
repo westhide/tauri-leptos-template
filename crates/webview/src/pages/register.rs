@@ -3,8 +3,8 @@ use leptos::{ev::SubmitEvent, prelude::*, task::spawn_local};
 use leptos_router::hooks::use_navigate;
 use service::{
     config::{Config, server::SaasPlatform},
-    models::namespace::login::LoginParams,
-    routes::login::login,
+    models::namespace::register::RegisterParams,
+    routes::register::register,
     traits::from_ctx::FromCtx,
 };
 
@@ -15,16 +15,21 @@ use crate::{
         input::{Input, InputType},
         label::Label,
     },
-    shared::logger::error,
-    views::fallback::Loading,
+    pages::fallback::Loading,
+    shared::{consts::HOME_PAGE, logger::error},
 };
 
 #[component]
-pub fn Login() -> impl IntoView {
+pub fn Register() -> impl IntoView {
     let username = RwSignal::new(String::new());
+
     let password = RwSignal::new(String::new());
     let password_type = RwSignal::new(InputType::Password);
     let show_password = RwSignal::new(false);
+
+    let confirm_password = RwSignal::new(String::new());
+    let confirm_password_type = RwSignal::new(InputType::Password);
+    let show_confirm_password = RwSignal::new(false);
 
     let navigate = use_navigate();
     let error_message = RwSignal::new(None::<String>);
@@ -38,31 +43,43 @@ pub fn Login() -> impl IntoView {
         }
     };
 
-    let handle_login = move |ev: SubmitEvent| {
+    let toggle_show_confirm_password = move |_| {
+        show_confirm_password.update(|value| *value ^= true);
+        if show_confirm_password.get_untracked() {
+            confirm_password_type.set(InputType::Text);
+        } else {
+            confirm_password_type.set(InputType::Password);
+        }
+    };
+
+    let handle_register = move |ev: SubmitEvent| {
         ev.prevent_default();
 
         let username = username.get_untracked();
         let password = password.get_untracked();
+        let confirm_password = confirm_password.get_untracked();
+
+        if password != confirm_password {
+            error_message.set(Some("密码不一致".into()));
+            return;
+        }
 
         let config = Config::from_ctx();
-        // TODO: captcha
-        let SaasPlatform { captcha, .. } = config.server.saas_platform.clone();
+        let SaasPlatform { captcha, .. } = config.server.platform.clone();
+
+        let params = RegisterParams {
+            nickname: username.clone(),
+            username,
+            password,
+            captcha_verification: captcha,
+        };
 
         let navigate = navigate.clone();
         spawn_local(async move {
-            let params = LoginParams {
-                username,
-                password,
-                social_type: None,
-                social_code: None,
-                social_state: None,
-                social_code_valid: None,
-                captcha_verification: captcha,
-            };
-            match login(params).await {
-                Ok(_data) => {
+            match register(params).await {
+                Ok(data) => {
                     error_message.set(None);
-                    navigate("/", Default::default());
+                    navigate(HOME_PAGE, Default::default());
                 },
                 Err(err) => {
                     error!(%err);
@@ -79,11 +96,11 @@ pub fn Login() -> impl IntoView {
                     <div class="grid gap-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>登录</CardTitle>
-                                <CardDescription>输入用户名和密码</CardDescription>
+                                <CardTitle>注册</CardTitle>
+                                <CardDescription>创建账号</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <form on:submit=handle_login>
+                                <form on:submit=handle_register>
                                     <div class="grid gap-6">
                                         <div class="grid gap-3">
                                             <Label html_for="username">用户名</Label>
@@ -93,23 +110,17 @@ pub fn Login() -> impl IntoView {
                                                 autocomplete="username"
                                                 placeholder="请输入用户名"
                                                 bind_value=username
-                                                on:input=move |_| error_message.set(None)
                                             />
                                         </div>
                                         <div class="grid gap-3">
-                                            <div class="grid gap-2 items-center grid-cols-[1fr_auto]">
-                                                <Label html_for="password">密码</Label>
-                                                <a href="#" class="text-sm hover:underline underline-offset-4">
-                                                    忘记密码?
-                                                </a>
-                                            </div>
+                                            <Label html_for="password">密码</Label>
                                             <div class="relative">
                                                 <Input
                                                     class="pr-10"
                                                     id="password"
                                                     required=true
                                                     r#type=password_type
-                                                    autocomplete="current-password"
+                                                    autocomplete="new-password"
                                                     minlength=8
                                                     placeholder="请输入密码"
                                                     bind_value=password
@@ -120,14 +131,43 @@ pub fn Login() -> impl IntoView {
                                                     type="button"
                                                     on:click=toggle_show_password
                                                 >
-
                                                     {move || {
                                                         if show_password.get() {
                                                             view! {
                                                                 <LeptosIcon icon=IconType::EyeOff class="size-4" />
                                                             }
                                                         } else {
-
+                                                            view! { <LeptosIcon icon=IconType::Eye class="size-4" /> }
+                                                        }
+                                                    }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="grid gap-3">
+                                            <Label html_for="confirm-password">确认密码</Label>
+                                            <div class="relative">
+                                                <Input
+                                                    class="pr-10"
+                                                    id="confirm-password"
+                                                    required=true
+                                                    r#type=confirm_password_type
+                                                    autocomplete="new-password"
+                                                    minlength=8
+                                                    placeholder="请再次输入密码"
+                                                    bind_value=confirm_password
+                                                    on:input=move |_| error_message.set(None)
+                                                />
+                                                <button
+                                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                                    type="button"
+                                                    on:click=toggle_show_confirm_password
+                                                >
+                                                    {move || {
+                                                        if show_confirm_password.get() {
+                                                            view! {
+                                                                <LeptosIcon icon=IconType::EyeOff class="size-4" />
+                                                            }
+                                                        } else {
                                                             view! { <LeptosIcon icon=IconType::Eye class="size-4" /> }
                                                         }
                                                     }}
@@ -138,13 +178,12 @@ pub fn Login() -> impl IntoView {
                                             {error_message}
                                         </div>
                                         <div class="flex flex-col gap-3">
-                                            <Button class="w-full">登录</Button>
+                                            <Button class="w-full">注册</Button>
                                         </div>
                                     </div>
                                     <div class="mt-4 text-sm text-center">
-                                        "还没有账号？"
-                                        <a href="/register" class="ml-2 underline underline-offset-4">
-                                            "注册"
+                                        "已有账号？" <a href="/login" class="ml-2 underline underline-offset-4">
+                                            "登录"
                                         </a>
                                     </div>
                                 </form>

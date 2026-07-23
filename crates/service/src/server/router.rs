@@ -18,7 +18,8 @@ use crate::{
     routes::{database::schemas, version::version},
     server::{
         context::Context,
-        extension::{database::DbClient, saas_platform::SaasPlatform},
+        extensions::{database::Client, platform::SaasPlatform},
+        middleware::credential::Auth,
     },
     shared::error::Result,
 };
@@ -32,19 +33,20 @@ where
     LeptosOptions: FromRef<Context<S>>,
 {
     let config = Config::from_ref(&ctx.state);
-    let database = DbClient::new(&config.server.database).await?;
-    let saas_platform = SaasPlatform::new(&config.server.saas_platform);
+    let database = Client::new(&config.server.database).await?;
+    let platform = SaasPlatform::new(config.server.platform.clone());
+    let credential = Auth::layer(database.clone(), config.server.credential.clone());
 
     let ctx_hook = {
         let Context { state, task_tracker, cancellation } = ctx.clone();
         let database = database.clone();
-        let saas_platform = saas_platform.clone();
+        let platform = platform.clone();
 
         move || {
             provide_context(state.clone());
             provide_context(config.clone());
             provide_context(database.clone());
-            provide_context(saas_platform.clone());
+            provide_context(platform.clone());
             provide_context(task_tracker.clone());
             provide_context(cancellation.clone());
         }
@@ -66,15 +68,23 @@ where
     let fallback = ErrorHandler::new_with_context(ctx_hook.clone(), shell, options);
 
     let router = Router::new()
+        // API
         .route("/api/health", get(StatusCode::OK))
         .route("/api/version", get(version))
         .route("/api/database/schemas", get(schemas))
+        // Leptos SSR
         .leptos_routes_with_context(&ctx, routes, ctx_hook, render_fn)
+        // Assets & pkg
         .route_service("/assets/{*path}", serve_dir.clone())
         .route_service(&pkg_dir_route, serve_dir)
+        // Auth layer
+        .layer(credential)
+        // Fallback
         .fallback_service(fallback)
+        // Extensions
         .layer(Extension(database))
-        .layer(Extension(saas_platform))
+        .layer(Extension(platform))
+        // Context state
         .with_state(ctx);
 
     Ok(router)
@@ -84,7 +94,7 @@ where
 impl_from_ctx!(Nonce);
 
 // Unsafe: must call provide_context() hook
-impl_from_ctx!(DbClient);
+impl_from_ctx!(Client);
 impl_from_ctx!(SaasPlatform);
 impl_from_ctx!(TaskTracker);
 impl_from_ctx!(CancellationToken);

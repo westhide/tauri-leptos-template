@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 use tracing::{info, log::Level};
-use webview::{shared::logger::init_logger, views::Main};
+use webview::{pages::Main, shared::logger::init_logger};
 
 // #[tokio::main(flavor = "current_thread")] async
 fn main() {

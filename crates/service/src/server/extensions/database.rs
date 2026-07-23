@@ -5,16 +5,16 @@ use surrealdb::{
     engine::any::{Any, connect},
 };
 
-use crate::{config::server::Database as DBConfig, shared::logger::debug};
+use crate::{config::server::Database as Config, shared::logger::debug};
 
 const INIT_SQL: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/sql/init.surql"));
 
 #[derive(Debug, Clone)]
-pub struct DbClient {
+pub struct Client {
     inner: Surreal<Any>,
 }
 
-impl Deref for DbClient {
+impl Deref for Client {
     type Target = Surreal<Any>;
 
     fn deref(&self) -> &Self::Target {
@@ -22,9 +22,9 @@ impl Deref for DbClient {
     }
 }
 
-impl DbClient {
-    pub async fn new(config: &DBConfig) -> Result<Self, Error> {
-        let DBConfig { url, namespace } = config;
+impl Client {
+    pub async fn new(config: &Config) -> Result<Self, Error> {
+        let Config { url, namespace } = config;
 
         let client = connect(url).await?;
         client.health().await?;

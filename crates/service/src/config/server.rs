@@ -6,6 +6,22 @@ use crate::shared::consts::{PKG_NAME, PKG_VERSION, SERVER_SHUTDOWN_TIMEOUT};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
+pub struct Database {
+    pub url: String,
+    pub namespace: String,
+}
+
+impl Default for Database {
+    fn default() -> Self {
+        Self {
+            url: format!("rocksdb:///tmp/{PKG_NAME}-{PKG_VERSION}-db"),
+            namespace: "default".into(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct SaasPlatform {
     pub base_url: String,
     pub namespace: String,
@@ -24,17 +40,13 @@ impl Default for SaasPlatform {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
-pub struct Database {
-    pub url: String,
-    pub namespace: String,
+pub struct Credential {
+    pub bypass_paths: Vec<String>,
 }
 
-impl Default for Database {
+impl Default for Credential {
     fn default() -> Self {
-        Self {
-            url: format!("rocksdb:///tmp/{PKG_NAME}-{PKG_VERSION}-db"),
-            namespace: "default".into(),
-        }
+        Self { bypass_paths: vec!["/login".into(), "/register".into()] }
     }
 }
 
@@ -45,7 +57,8 @@ pub struct Server {
     pub grpc_url: SocketAddr,
     pub start_grpc: bool,
     pub database: Database,
-    pub saas_platform: SaasPlatform,
+    pub platform: SaasPlatform,
+    pub credential: Credential,
     pub shutdown_timeout: u64,
 }
 
@@ -56,7 +69,8 @@ impl Default for Server {
             grpc_url: SocketAddr::from(([127, 0, 0, 1], 1520)),
             start_grpc: true,
             database: Default::default(),
-            saas_platform: Default::default(),
+            platform: Default::default(),
+            credential: Default::default(),
             shutdown_timeout: SERVER_SHUTDOWN_TIMEOUT,
         }
     }

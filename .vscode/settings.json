@@ -14,5 +14,5 @@
 		"--rustfmt",
 		"--stdin"
 	],
-	"cSpell.words": ["leptos", "libgrpc", "surrealdb"]
+	"cSpell.words": ["leptos", "libgrpc", "pingpong", "surrealdb"]
 }

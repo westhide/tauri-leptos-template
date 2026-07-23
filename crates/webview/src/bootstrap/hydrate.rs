@@ -2,13 +2,13 @@ use leptos::{prelude::*, wasm_bindgen, wasm_bindgen::prelude::*};
 use service::routes::config;
 
 use crate::{
+    pages::Main,
     shared::{
         NULL, Null,
         client::GrpcClient,
         error::Result,
         logger::{debug, info, init_logger},
     },
-    views::Main,
 };
 
 // wasm-bindgen-futures runtime init during hydrate_body function,

@@ -46,7 +46,7 @@ surrealdb          = { workspace = true }
 thiserror          = { workspace = true }
 tokio              = { workspace = true, features = ["macros", "sync", "time"] }
 tokio-util         = { workspace = true, features = ["rt"] }
-tower-http         = { workspace = true, features = ["cors"] }
+tower-http         = { workspace = true, features = ["auth", "cors", "trace"] }
 tracing            = { workspace = true, features = ["attributes", "log", "release_max_level_info", "std"] }
 tracing-subscriber = { workspace = true, features = ["ansi", "env-filter", "fmt", "smallvec", "std", "tracing-log"] }
 

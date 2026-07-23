@@ -12,13 +12,13 @@ use crate::{
 #[instrument(level = Level::DEBUG, skip_all, ret, err)]
 #[server(input= Json)]
 pub async fn register(params: RegisterParams) -> Result<User, ServerFnError> {
-    use crate::server::extension::{database::DbClient, saas_platform::SaasPlatform};
+    use crate::server::extensions::{database::Client, platform::SaasPlatform};
 
     let platform = SaasPlatform::from_ctx();
     let data = platform.register(&params).await?;
 
     // save to users table
-    let db = DbClient::from_ctx();
+    let db = Client::from_ctx();
     let user = User::from((params, data));
     db.insert_user(user.clone()).await?;
 

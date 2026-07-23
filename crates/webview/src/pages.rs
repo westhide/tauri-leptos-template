@@ -10,7 +10,7 @@ use leptos::prelude::*;
 use leptos_meta::provide_meta_context;
 use leptos_router::{
     SsrMode,
-    components::{Route, Router, Routes, RoutingProgress},
+    components::{Outlet, ParentRoute, Redirect, Route, Router, Routes, RoutingProgress},
     path,
     static_routes::StaticRoute,
 };
@@ -18,8 +18,8 @@ use leptos_router::{
 #[cfg(client)]
 use crate::bootstrap::hydrate::hydrate_hook;
 use crate::{
-    shared::consts::MAX_ROUTING_TIME,
-    views::{
+    bootstrap::Bootstrap,
+    pages::{
         dashboard::Dashboard,
         failure::error_fallback,
         fallback::{Loading, NotFound},
@@ -28,11 +28,34 @@ use crate::{
         register::Register,
         version::Version,
     },
+    shared::consts::{HOME_PAGE, MAX_ROUTING_TIME},
+    state::auth::provide_auth,
 };
+
+#[component]
+pub fn HydrationHook() -> impl IntoView {
+    #[cfg(client)]
+    Suspend::new(hydrate_hook())
+}
+
+#[component]
+pub fn Pages() -> impl IntoView {
+    view! {
+        <Bootstrap>
+            <Outlet />
+        </Bootstrap>
+    }
+}
+
+#[component]
+pub fn Home() -> impl IntoView {
+    view! { <Redirect path=HOME_PAGE /> }
+}
 
 #[component]
 pub fn Main() -> impl IntoView {
     provide_meta_context();
+    let _auth = provide_auth();
 
     let (is_routing, set_is_routing) = signal(false);
     let static_route = SsrMode::Static(StaticRoute::new());
@@ -45,23 +68,21 @@ pub fn Main() -> impl IntoView {
                 </div>
                 <main class="h-full">
                     <Routes transition=true fallback=NotFound>
-                        <Route path=path!("/") view=Dashboard />
+                        <Route path=path!("/") view=Home />
                         <Route path=path!("/login") view=Login />
                         <Route path=path!("/version") view=Version />
                         <Route path=path!("/register") view=Register />
                         <Route path=path!("/pingpong") view=PingPong />
                         <Route path=path!("/loading") view=Loading ssr=static_route.clone() />
                         <Route path=path!("/404") view=NotFound ssr=static_route />
+                        // pages
+                        <ParentRoute path=path!("/pages") view=Pages>
+                            <Route path=path!("/dashboard") view=Dashboard />
+                        </ParentRoute>
                     </Routes>
                 </main>
             </Router>
             <HydrationHook />
         </ErrorBoundary>
     }
-}
-
-#[component]
-pub fn HydrationHook() -> impl IntoView {
-    #[cfg(client)]
-    Suspend::new(hydrate_hook())
 }

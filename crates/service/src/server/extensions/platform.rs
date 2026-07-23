@@ -14,19 +14,21 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub struct SaasPlatform {
-    ns: String,
     client: Client,
+    ns: String,
     base_url: String,
+    // captcha: Option<String>,
 }
 
 pub const NS_HEADER: HeaderName = HeaderName::from_static("tenant-id");
 
 impl SaasPlatform {
-    pub fn new(config: &Config) -> Self {
+    pub fn new(config: Config) -> Self {
         Self {
-            ns: config.namespace.clone(),
             client: Client::new(),
-            base_url: config.base_url.clone(),
+            ns: config.namespace,
+            base_url: config.base_url,
+            // captcha: config.captcha,
         }
     }
 

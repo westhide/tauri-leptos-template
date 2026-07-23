@@ -3,7 +3,7 @@ use surrealdb::types::RecordId;
 
 use crate::{
     models::database::user::{USER_DB, USER_TABLE, User},
-    server::extension::database::DbClient,
+    server::extensions::database::Client,
     shared::{
         NULL, Null,
         error::Result,
@@ -11,7 +11,7 @@ use crate::{
     },
 };
 
-impl DbClient {
+impl Client {
     pub async fn select_user(&self, username: &str) -> Result<Option<User>> {
         self.use_db(USER_DB).await?;
         let sql = format!("SELECT * FROM {USER_TABLE} WHERE username = $username");
@@ -32,17 +32,9 @@ impl DbClient {
         self.query(sql).bind(("rid", rid)).bind(("user", user)).await?.check()?;
         Ok(NULL)
     }
-
-    pub async fn upsert_user(&self, user: User) -> Result<Null> {
-        self.use_db(USER_DB).await?;
-        let rid = RecordId::new(USER_TABLE, user.user_id);
-        let sql = format!("UPSERT $rid CONTENT $user");
-        self.query(sql).bind(("rid", rid)).bind(("user", user)).await?.check()?;
-        Ok(NULL)
-    }
 }
 
 #[instrument(level = Level::DEBUG, skip_all, ret, err)]
-pub async fn users(db: Extension<DbClient>) -> Result<Json<Vec<User>>> {
+pub async fn users(db: Extension<Client>) -> Result<Json<Vec<User>>> {
     Ok(Json(db.select_users().await?))
 }

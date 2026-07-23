@@ -12,10 +12,10 @@ use crate::{
 #[instrument(level = Level::DEBUG, skip_all, ret, err)]
 #[server(input= Json)]
 pub async fn login(params: LoginParams) -> Result<User, ServerFnError> {
-    use crate::server::extension::{database::DbClient, saas_platform::SaasPlatform};
+    use crate::server::extensions::{database::Client, platform::SaasPlatform};
 
     // check local user password
-    let db = DbClient::from_ctx();
+    let db = Client::from_ctx();
     if let Some(user) = db.select_user(&params.username).await? {
         if params.password != user.password {
             return err!("密码不正确")?
@@ -31,7 +31,7 @@ pub async fn login(params: LoginParams) -> Result<User, ServerFnError> {
 
     // save to users table
     let user = User::from((params, data));
-    db.upsert_user(user.clone()).await?;
+    db.insert_user(user.clone()).await?;
 
     Ok(user)
 }

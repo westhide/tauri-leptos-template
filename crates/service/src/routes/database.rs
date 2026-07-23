@@ -5,14 +5,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     models::database::{Database, Namespace, NamespaceDatabase},
-    server::extension::database::DbClient,
+    server::extensions::database::Client,
     shared::{
         error::{Result, err},
         logger::{Level, instrument},
     },
 };
 
-impl DbClient {
+impl Client {
     async fn namespace_info(&self) -> Result<Namespace> {
         const SQL: &str = "INFO FOR NAMESPACE STRUCTURE";
         let Some(namespace) = self.query(SQL).await?.check()?.take(0)? else {
@@ -21,7 +21,7 @@ impl DbClient {
         Ok(namespace)
     }
 
-    async fn database_info(self: &DbClient, db: &str) -> Result<Database> {
+    async fn database_info(self: &Client, db: &str) -> Result<Database> {
         const SQL: &str = "INFO FOR DATABASE STRUCTURE";
         self.use_db(db).await?;
         let Some(database) = self.query(SQL).await?.check()?.take(0)? else {
@@ -39,7 +39,7 @@ pub struct Schemas {
 }
 
 #[instrument(level = Level::DEBUG, skip_all, ret, err)]
-pub async fn schemas(db: Extension<DbClient>) -> Result<Json<Schemas>> {
+pub async fn schemas(db: Extension<Client>) -> Result<Json<Schemas>> {
     let namespace = db.namespace_info().await?;
 
     let mut databases = vec![];

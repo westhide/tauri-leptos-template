@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
 
-use crate::shared::logger::error;
+use crate::shared::{consts::HOME_PAGE, logger::error};
 
 pub fn error_fallback(errors: ArcRwSignal<Errors>) -> impl IntoView {
     view! { <Failure errors /> }
@@ -17,14 +17,15 @@ pub fn Failure(errors: ArcRwSignal<Errors>) -> impl IntoView {
         if let Ok(history) = window().history() {
             history.back().ok();
         } else {
-            navigate("/", Default::default());
+            navigate(HOME_PAGE, Default::default());
         }
     };
 
+    // TODO
     let error_list = errors.read().iter();
 
     view! {
-        <div class="grid min-h-full place-items-center px-6 py-24 sm:py-32 lg:px-8">
+        <div class="grid place-items-center py-24 px-6 min-h-full sm:py-32 lg:px-8">
             <div class="text-center">
                 <p class="text-base font-semibold text-red-400">"Error"</p>
                 {{
@@ -34,15 +35,13 @@ pub fn Failure(errors: ArcRwSignal<Errors>) -> impl IntoView {
                             .read()
                             .iter()
                             .map(|(id, err)| {
-                                view! {
-                                    <li class="font-mono break-all">{format!("{id}: {err}")}</li>
-                                }
+                                view! { <li class="font-mono break-all">{format!("{id}: {err}")}</li> }
                             })
                             .collect();
 
                         view! {
-                            <div class="mt-8 mx-auto max-w-lg">
-                                <ul class="text-left text-sm text-red-300 bg-red-950/50 rounded-lg p-4 space-y-2 border border-red-900/50">
+                            <div class="mx-auto mt-8 max-w-lg">
+                                <ul class="p-4 space-y-2 text-sm text-left text-red-300 rounded-lg border bg-red-950/50 border-red-900/50">
                                     {items}
                                 </ul>
                             </div>
@@ -50,10 +49,10 @@ pub fn Failure(errors: ArcRwSignal<Errors>) -> impl IntoView {
                     }
                 }}
 
-                <div class="mt-10 grid place-items-center">
+                <div class="grid place-items-center mt-10">
                     <button
                         on:click=go_back
-                        class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                        class="py-2.5 px-3.5 text-sm font-semibold text-white bg-indigo-500 rounded-md hover:bg-indigo-400 shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                     >
                         Go back
                     </button>

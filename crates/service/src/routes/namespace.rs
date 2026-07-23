@@ -12,7 +12,7 @@ use crate::{
 #[instrument(level = Level::DEBUG, skip_all, ret, err)]
 #[server(input= Json)]
 pub async fn get(domain: String) -> Result<GetNamespaceData, ServerFnError> {
-    use crate::server::extension::saas_platform::SaasPlatform;
+    use crate::server::extensions::platform::SaasPlatform;
 
     let platform = SaasPlatform::from_ctx();
     let params = GetNamespaceParams { website: domain };

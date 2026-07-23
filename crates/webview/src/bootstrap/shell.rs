@@ -3,8 +3,8 @@ use leptos_meta::{HashedStylesheet, Meta, MetaTags, Title, provide_meta_context}
 use service::{config::Config, traits::from_ctx::FromCtx};
 
 use crate::{
+    pages::Main,
     shared::{error::Result, logger::debug},
-    views::Main,
 };
 
 fn csp_policies(enable: bool) -> String {

@@ -9,9 +9,10 @@ grpc_url   = "127.0.0.1:1520"
 host_url   = "127.0.0.1:1420"
 start_grpc = true
 
-
-[server.saas_platform]
-# base_url   = "http://192.168.100.64:8102"
+[server.platform]
 base_url  = "https://qa-api.meilianshuke.com"
 captcha   = "B0x1lS76ywEr6dYRzdEFBG+IsD+s49GitkYsqh/7um8="
 namespace = "166"
+
+[server.credential]
+bypass_paths = ["/assets", "/login", "/pages", "/pkg", "/register", "/server"]
