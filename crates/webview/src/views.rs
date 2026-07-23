@@ -1,6 +1,6 @@
+pub mod dashboard;
 pub mod failure;
 pub mod fallback;
-pub mod home;
 pub mod login;
 pub mod pingpong;
 pub mod register;
@@ -20,9 +20,9 @@ use crate::bootstrap::hydrate::hydrate_hook;
 use crate::{
     shared::consts::MAX_ROUTING_TIME,
     views::{
+        dashboard::Dashboard,
         failure::error_fallback,
         fallback::{Loading, NotFound},
-        home::Home,
         login::Login,
         pingpong::PingPong,
         register::Register,
@@ -45,10 +45,10 @@ pub fn Main() -> impl IntoView {
                 </div>
                 <main class="h-full">
                     <Routes transition=true fallback=NotFound>
-                        <Route path=path!("/") view=Home />
+                        <Route path=path!("/") view=Dashboard />
+                        <Route path=path!("/login") view=Login />
                         <Route path=path!("/version") view=Version />
                         <Route path=path!("/register") view=Register />
-                        <Route path=path!("/login") view=Login />
                         <Route path=path!("/pingpong") view=PingPong />
                         <Route path=path!("/loading") view=Loading ssr=static_route.clone() />
                         <Route path=path!("/404") view=NotFound ssr=static_route />

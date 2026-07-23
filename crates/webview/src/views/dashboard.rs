@@ -3,7 +3,7 @@ use leptos::{ev::SubmitEvent, prelude::*};
 use crate::{bootstrap::Bootstrap, shared::logger::info};
 
 #[component]
-pub fn Home() -> impl IntoView {
+pub fn Dashboard() -> impl IntoView {
     let name = RwSignal::new(String::new());
     let version = RwSignal::new(String::new());
 
