@@ -20,4 +20,6 @@ impl QueryParams {
 }
 
 pub const HOME_PAGE: &str = "/pages/dashboard";
+pub const LOGIN_PAGE: &str = "/login";
+
 pub const MAX_ROUTING_TIME: Duration = Duration::from_secs(1);

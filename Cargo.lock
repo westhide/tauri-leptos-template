@@ -9160,6 +9160,7 @@ name = "webview"
 version = "0.0.1"
 dependencies = [
  "cfg_aliases",
+ "chrono",
  "console_error_panic_hook",
  "console_log",
  "gloo",

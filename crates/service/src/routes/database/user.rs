@@ -6,7 +6,7 @@ use crate::{
     server::extensions::database::Client,
     shared::{
         NULL, Null,
-        error::Result,
+        error::{Result, err},
         logger::{Level, instrument},
     },
 };
@@ -23,6 +23,13 @@ impl Client {
         self.use_db(USER_DB).await?;
         let users: Vec<User> = self.select(USER_TABLE).await?;
         Ok(users)
+    }
+
+    pub async fn select_user_with_token(&self, token: &str) -> Result<User> {
+        self.use_db(USER_DB).await?;
+        let sql = format!("SELECT * FROM {USER_TABLE} WHERE access_token = $token");
+        let user = self.query(sql).bind(("token", token)).await?.check()?.take(0)?;
+        if let Some(user) = user { Ok(user) } else { err!("user not exist") }
     }
 
     pub async fn insert_user(&self, user: User) -> Result<Null> {

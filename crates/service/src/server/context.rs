@@ -1,4 +1,4 @@
-use std::{ops::Deref, time::Duration};
+use std::time::Duration;
 
 use axum::extract::FromRef;
 use leptos::config::LeptosOptions;
@@ -16,36 +16,28 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
-pub struct Context<S> {
-    pub state: S,
+pub struct Context {
+    pub config: Config,
+    pub leptos: LeptosOptions,
     pub task_tracker: TaskTracker,
     pub cancellation: CancellationToken,
 }
 
-impl<S> Deref for Context<S> {
-    type Target = S;
-
-    fn deref(&self) -> &Self::Target {
-        &self.state
-    }
-}
-
-pub trait ShutdownTimeout {
-    fn shutdown_timeout(&self) -> u64;
-}
-
-impl<S> Context<S> {
-    pub fn new(state: S) -> Self {
-        Self { state, task_tracker: TaskTracker::new(), cancellation: CancellationToken::new() }
+impl Context {
+    pub fn new(config: Config, leptos: LeptosOptions) -> Self {
+        Self {
+            config,
+            leptos,
+            task_tracker: TaskTracker::new(),
+            cancellation: CancellationToken::new(),
+        }
     }
 
-    pub fn graceful_shutdown_signal(&self) -> Result<impl Future<Output = Null> + use<S>>
-    where
-        S: Clone + ShutdownTimeout,
-    {
-        let Self { state, task_tracker, cancellation } = self.clone();
+    pub fn graceful_shutdown_signal(&self) -> Result<impl Future<Output = Null> + use<>> {
+        let Self { config, task_tracker, cancellation, .. } = self.clone();
 
         let signal = ShutdownSignal::new()?;
+        let shutdown_timeout = config.server.shutdown_timeout;
 
         Ok(async move {
             info!("Register graceful shutdown signal");
@@ -58,7 +50,7 @@ impl<S> Context<S> {
             cancellation.cancel();
 
             info!("Shutdown tasks...");
-            let duration = Duration::from_secs(state.shutdown_timeout());
+            let duration = Duration::from_secs(shutdown_timeout);
             if let Err(err) = timeout(duration, task_tracker.wait()).await {
                 error!("Shutdown timeout: {err}, forcing shutdown");
             }
@@ -68,20 +60,14 @@ impl<S> Context<S> {
     }
 }
 
-impl<S> FromRef<Context<S>> for Config
-where
-    Self: FromRef<S>,
-{
-    fn from_ref(ctx: &Context<S>) -> Self {
-        Self::from_ref(&ctx.state)
+impl FromRef<Context> for Config {
+    fn from_ref(ctx: &Context) -> Self {
+        ctx.config.clone()
     }
 }
 
-impl<S> FromRef<Context<S>> for LeptosOptions
-where
-    LeptosOptions: FromRef<S>,
-{
-    fn from_ref(ctx: &Context<S>) -> Self {
-        Self::from_ref(&ctx.state)
+impl FromRef<Context> for LeptosOptions {
+    fn from_ref(ctx: &Context) -> Self {
+        ctx.leptos.clone()
     }
 }

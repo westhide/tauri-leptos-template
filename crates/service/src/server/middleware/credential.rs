@@ -1,6 +1,5 @@
 use std::{
     future::Future,
-    mem::ManuallyDrop,
     ops::Deref,
     pin::Pin,
     sync::Arc,
@@ -9,11 +8,14 @@ use std::{
 
 use axum::{
     body::Body,
-    http::{Request, Response},
+    http::{HeaderValue, Request, Response, StatusCode, header},
 };
-use tower_http::auth::{AsyncAuthorizeRequest, AsyncRequireAuthorizationLayer};
+use tower_http::auth::{AsyncAuthorizeRequest, AsyncRequireAuthorizationLayer as AuthLayer};
 
-use crate::{config::server::Credential as Config, server::extensions::database::Client};
+use crate::{
+    config::server::Credential as Config, server::extensions::database::Client,
+    shared::error::Result,
+};
 
 #[derive(Debug)]
 pub struct AuthInner {
@@ -34,16 +36,15 @@ impl Deref for Auth {
     }
 }
 
-impl From<AuthInner> for Auth {
-    fn from(inner: AuthInner) -> Self {
+impl Auth {
+    pub fn new(db: Client, config: Config) -> Self {
+        let inner = AuthInner { db, bypass_paths: config.bypass_paths };
+
         Self { inner: Arc::new(inner) }
     }
-}
 
-impl Auth {
-    pub fn layer(db: Client, config: Config) -> AsyncRequireAuthorizationLayer<Self> {
-        let inner = AuthInner { db, bypass_paths: config.bypass_paths };
-        AsyncRequireAuthorizationLayer::new(inner.into())
+    pub fn layer(db: Client, config: Config) -> AuthLayer<Self> {
+        AuthLayer::new(Self::new(db, config))
     }
 }
 
@@ -53,24 +54,37 @@ impl AsyncAuthorizeRequest<Body> for Auth {
     type ResponseBody = Body;
 
     fn authorize(&mut self, request: Request<Body>) -> Self::Future {
-        AuthFuture { request: ManuallyDrop::new(request) }
+        AuthFuture { inner: self.inner.clone(), request: Some(request) }
     }
 }
 
-// TODO: AuthFuture
 #[derive(Debug)]
 pub struct AuthFuture {
-    // state: Auth,
-    request: ManuallyDrop<Request<Body>>,
+    inner: Arc<AuthInner>,
+    request: Option<Request<Body>>,
+}
+
+fn redirect<B>() -> Response<B>
+where
+    B: Default,
+{
+    const LOGIN: HeaderValue = HeaderValue::from_static("/login");
+
+    let (mut parts, data) = Response::default().into_parts();
+    parts.status = StatusCode::FOUND;
+    parts.headers.insert(header::LOCATION, LOGIN);
+    Response::from_parts(parts, data)
 }
 
 impl Future for AuthFuture {
     type Output = Result<Request<Body>, Response<Body>>;
 
     fn poll(mut self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<Self::Output> {
-        let request = &mut self.request;
-
-        Poll::Ready(Ok(unsafe { ManuallyDrop::take(request) }))
+        if let Some(req) = self.request.take() {
+            Poll::Ready(Ok(req))
+        } else {
+            Poll::Ready(Err(redirect()))
+        }
 
         // TODO
         // let AuthInner { db, bypass_paths } = &*self.state;

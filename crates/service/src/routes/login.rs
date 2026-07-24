@@ -21,7 +21,7 @@ pub async fn login(params: LoginParams) -> Result<User, ServerFnError> {
             return err!("密码不正确")?
         }
         // TODO: expires_time
-        debug!(user.username, "login with local user password");
+        debug!(user.username, "login with local user");
         return Ok(user)
     }
 
@@ -34,4 +34,13 @@ pub async fn login(params: LoginParams) -> Result<User, ServerFnError> {
     db.insert_user(user.clone()).await?;
 
     Ok(user)
+}
+
+#[instrument(level = Level::DEBUG, skip_all, ret, err)]
+#[server(input= Json)]
+pub async fn login_with_token(token: String) -> Result<User, ServerFnError> {
+    use crate::server::extensions::database::Client;
+
+    let db = Client::from_ctx();
+    Ok(db.select_user_with_token(&token).await?)
 }

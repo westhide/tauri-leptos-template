@@ -14,6 +14,7 @@ use leptos_router::{
     path,
     static_routes::StaticRoute,
 };
+use service::traits::from_ctx::FromCtx;
 
 #[cfg(client)]
 use crate::bootstrap::hydrate::hydrate_hook;
@@ -28,8 +29,8 @@ use crate::{
         register::Register,
         version::Version,
     },
-    shared::consts::{HOME_PAGE, MAX_ROUTING_TIME},
-    state::auth::provide_auth,
+    shared::consts::{HOME_PAGE, LOGIN_PAGE, MAX_ROUTING_TIME},
+    state::State,
 };
 
 #[component]
@@ -39,23 +40,34 @@ pub fn HydrationHook() -> impl IntoView {
 }
 
 #[component]
-pub fn Pages() -> impl IntoView {
-    view! {
-        <Bootstrap>
-            <Outlet />
-        </Bootstrap>
-    }
-}
-
-#[component]
 pub fn Home() -> impl IntoView {
     view! { <Redirect path=HOME_PAGE /> }
 }
 
 #[component]
+pub fn LoginPage() -> impl IntoView {
+    view! { <Redirect path=LOGIN_PAGE /> }
+}
+
+#[component]
+pub fn Pages() -> impl IntoView {
+    let State { has_login, .. } = State::from_ctx();
+
+    view! {
+        <Show when=has_login fallback=LoginPage>
+            <Bootstrap>
+                <Outlet />
+            </Bootstrap>
+        </Show>
+    }
+}
+
+#[component]
 pub fn Main() -> impl IntoView {
     provide_meta_context();
-    let _auth = provide_auth();
+
+    let state = State::default();
+    provide_context(state);
 
     let (is_routing, set_is_routing) = signal(false);
     let static_route = SsrMode::Static(StaticRoute::new());

@@ -8,6 +8,7 @@ pub mod userinfo;
 
 use icons::common::IconType;
 use leptos::prelude::*;
+use service::traits::from_ctx::FromCtx;
 
 use crate::{
     bootstrap::{
@@ -22,6 +23,7 @@ use crate::{
             SidebarRail, SidebarTrigger,
         },
     },
+    state::State,
 };
 
 #[component]
@@ -66,8 +68,10 @@ pub fn Bootstrap(children: Children) -> impl IntoView {
     ];
 
     let logo = RwSignal::new("/assets/images/logo.png".to_string());
-    let name = RwSignal::new("medclaw".to_string());
-    let email = RwSignal::new("medclaw@medclaw.com".to_string());
+
+    let State { credential, .. } = State::from_ctx();
+    let name = Signal::derive(move || credential.read().name.clone());
+    let email = Signal::derive(move || credential.read().email.clone());
 
     view! {
         <SidebarProvider>

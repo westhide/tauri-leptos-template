@@ -10,7 +10,6 @@ use tracing::{debug, info};
 use webview::{
     bootstrap::shell::shell,
     shared::{NULL, Null, error::Error},
-    state::State,
 };
 
 #[tokio::main]
@@ -31,8 +30,7 @@ async fn main() -> Result<Null, Error> {
 
     let listener = TcpListener::bind(options.site_addr).await?;
 
-    let state = State::new(config, options);
-    let context = Context::new(state);
+    let context = Context::new(config, options);
     let shutdown_signal = context.graceful_shutdown_signal()?;
 
     let router = router(context, shell).await?;
